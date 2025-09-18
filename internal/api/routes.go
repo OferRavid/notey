@@ -4,12 +4,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterRoutes(e *echo.Echo) {
-	e.POST("/api/users", createUsers, Middleware())
+func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
+	e.POST("/api/users", createUser)
 	e.POST("/login", login)
+
 }
 
-func createUsers(c echo.Context) error {
+func createUser(c echo.Context) error {
 	return nil
 }
 

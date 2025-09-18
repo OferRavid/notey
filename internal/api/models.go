@@ -3,8 +3,14 @@ package api
 import (
 	"time"
 
+	"github.com/OferRavid/notes-app/internal/database"
 	"github.com/google/uuid"
 )
+
+type ApiConfig struct {
+	DbQueries *database.Queries
+	Secret    string
+}
 
 type User struct {
 	ID        uuid.UUID `json:"id"`

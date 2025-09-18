@@ -8,10 +8,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var jwtSecret = []byte("your_secret_key")
-
 // Middleware validates JWT and sets user_id in Echo context.
-func Middleware() echo.MiddlewareFunc {
+func (cfg *ApiConfig) Middleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			token, err := auth.GetBearerToken(c.Request().Header)
@@ -22,7 +20,7 @@ func Middleware() echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid Authorization header format"})
 			}
 
-			user_id, err := auth.ValidateJWT(token, string(jwtSecret))
+			user_id, err := auth.ValidateJWT(token, cfg.Secret)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid token"})
 			}
