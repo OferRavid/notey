@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/OferRavid/notes-app/internal/auth"
@@ -9,17 +10,24 @@ import (
 
 var jwtSecret = []byte("your_secret_key")
 
+// Middleware validates JWT and sets user_id in Echo context.
 func Middleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			token := c.Request().Header.Get("Authorization")
-			if token == "" {
-				return c.JSON(http.StatusUnauthorized, "missing token")
+			token, err := auth.GetBearerToken(c.Request().Header)
+			if token == "" || err != nil {
+				if errors.As(err, &auth.ErrNoAuthHeaderIncluded) {
+					return c.JSON(http.StatusUnauthorized, echo.Map{"error": "missing Authorization header"})
+				}
+				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid Authorization header format"})
 			}
-			_, err := auth.ValidateJWT(token, string(jwtSecret))
+
+			user_id, err := auth.ValidateJWT(token, string(jwtSecret))
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, "invalid token")
+				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid token"})
 			}
+
+			c.Set("user_id", user_id)
 			return next(c)
 		}
 	}

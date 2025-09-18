@@ -21,7 +21,15 @@ const (
 	TokenTypeAccess TokenType = "notey"
 )
 
-var ErrNoAuthHeaderIncluded = errors.New("no auth header included in request")
+type CustomError struct {
+	Message string
+}
+
+func (e *CustomError) Error() string {
+	return fmt.Sprintf("Error: %s", e.Message)
+}
+
+var ErrNoAuthHeaderIncluded = &CustomError{Message: "no auth header included in request"}
 
 func HashPassword(password string) (string, error) {
 	encrypted, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
