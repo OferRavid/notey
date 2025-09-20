@@ -5,15 +5,7 @@ import (
 )
 
 func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
-	e.POST("/api/users", createUser)
-	e.POST("/login", login)
+	e.POST("/api/users", cfg.handlerCreateUser)
+	e.POST("/api/login", cfg.handlerLogin)
 
-}
-
-func createUser(c echo.Context) error {
-	return nil
-}
-
-func login(c echo.Context) error {
-	return nil
 }
