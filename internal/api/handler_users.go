@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/OferRavid/notes-app/internal/auth"
-	"github.com/OferRavid/notes-app/internal/database"
+	"github.com/OferRavid/notey/internal/auth"
+	"github.com/OferRavid/notey/internal/database"
 	"github.com/labstack/echo/v4"
 )
 

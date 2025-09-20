@@ -3,12 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/OferRavid/notes-app/internal/database"
+	"github.com/OferRavid/notey/internal/database"
 	"github.com/google/uuid"
 )
 
 type ApiConfig struct {
 	DbQueries *database.Queries
+	Platform  string
 	Secret    string
 }
 

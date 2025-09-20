@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/OferRavid/notes-app/internal/api"
-	"github.com/OferRavid/notes-app/internal/database"
+	"github.com/OferRavid/notey/internal/api"
+	"github.com/OferRavid/notey/internal/database"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
@@ -21,6 +21,10 @@ func main() {
 	if dbURL == "" {
 		log.Fatal("DB_URL must be set")
 	}
+	platform := os.Getenv("PLATFORM")
+	if platform == "" {
+		log.Fatal("PLATFORM must be set")
+	}
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
@@ -32,6 +36,7 @@ func main() {
 	dbQueries := database.New(db)
 	apiCfg := &api.ApiConfig{
 		DbQueries: dbQueries,
+		Platform:  platform,
 		Secret:    jwtSecret,
 	}
 

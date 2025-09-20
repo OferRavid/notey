@@ -1,4 +1,4 @@
-module github.com/OferRavid/notes-app
+module github.com/OferRavid/notey
 
 go 1.23.4
 

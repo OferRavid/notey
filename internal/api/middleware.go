@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/OferRavid/notes-app/internal/auth"
+	"github.com/OferRavid/notey/internal/auth"
 	"github.com/labstack/echo/v4"
 )
 
