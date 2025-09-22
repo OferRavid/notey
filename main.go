@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"sync/atomic"
 
 	"github.com/OferRavid/notey/internal/api"
 	"github.com/OferRavid/notey/internal/database"
@@ -16,6 +17,7 @@ func main() {
 	const filepathRoot = "."
 	const port = "8080"
 
+	// Use environment variables to set up server's environment and saving them in a struct
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
@@ -34,15 +36,25 @@ func main() {
 		log.Fatalf("failed to open db: %s\n", err)
 	}
 	dbQueries := database.New(db)
-	apiCfg := &api.ApiConfig{
-		DbQueries: dbQueries,
-		Platform:  platform,
-		Secret:    jwtSecret,
+
+	cfg := &api.ApiConfig{
+		FileserverHits: atomic.Int32{},
+		DbQueries:      dbQueries,
+		FilepathRoot:   filepathRoot,
+		Platform:       platform,
+		Secret:         jwtSecret,
 	}
 
+	// Set up the server
 	e := echo.New()
-	apiCfg.RegisterRoutes(e)
-	e.Static("/", filepathRoot)
+	cfg.RegisterRoutes(e)
+
+	// Create a group for routes starting with /app
+	appGroup := e.Group("/app")
+
+	// Serve static files and strip the /app prefix
+	// Use the custom handler to serve static files
+	appGroup.GET("/*", cfg.ServeStaticFiles)
 
 	log.Printf("Serving files from %s on port: %s\n", filepathRoot, port)
 	e.Logger.Fatal(e.Start(":" + port))

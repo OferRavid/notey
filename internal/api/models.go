@@ -1,6 +1,7 @@
 package api
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/OferRavid/notey/internal/database"
@@ -8,9 +9,11 @@ import (
 )
 
 type ApiConfig struct {
-	DbQueries *database.Queries
-	Platform  string
-	Secret    string
+	FileserverHits atomic.Int32
+	DbQueries      *database.Queries
+	FilepathRoot   string
+	Platform       string
+	Secret         string
 }
 
 type User struct {
