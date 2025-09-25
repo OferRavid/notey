@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type Note struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Title     string
+	Content   string
+	UserID    uuid.UUID
+}
+
 type RefreshToken struct {
 	Token     string
 	CreatedAt time.Time
