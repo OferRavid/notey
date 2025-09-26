@@ -8,6 +8,7 @@ func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
 	// Routes to handle users
 	e.POST("/api/users", cfg.handlerCreateUser)
 	e.POST("/api/login", cfg.handlerLogin)
+	e.PUT("/api/users", cfg.handlerUpdateUserData, cfg.Middleware())
 
 	// Routes to hanlde refresh token
 	e.POST("/api/refresh", cfg.handlerRefreshToken)
@@ -17,7 +18,7 @@ func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
 	e.GET("/notes", cfg.handlerRetrieveNotes, cfg.Middleware())
 	e.GET("/notes:noteID", cfg.handlerGetNoteByID, cfg.Middleware())
 	e.POST("/notes", cfg.handlerCreateNote, cfg.Middleware())
-	// e.PUT("/notes/:id", cfg.handlerUpdateNote, cfg.Middleware())
+	e.PUT("/notes/:id", cfg.handlerUpdateNote, cfg.Middleware())
 	e.DELETE("/notes/:noteID", cfg.handlerDeleteNote, cfg.Middleware())
 
 	// Admin only routes

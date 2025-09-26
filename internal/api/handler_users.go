@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/OferRavid/notey/internal/auth"
@@ -16,12 +16,12 @@ type parameters struct {
 }
 
 // Create new user in database.
-// Gets email and password from request and hashes the password
-// Creates new user record in database using email and hashedPassword
+// Gets email and password from request and hashes the password.
+// Creates new user record in database using email and hashedPassword.
 func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
-	hashedPassword, email, err := getHashedPasswordAndEmail(c)
+	hashedPassword, email, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": err})
+		return c.JSON(statusCode, echo.Map{"Error": err})
 	}
 
 	user, err := cfg.DbQueries.CreateUser(
@@ -32,7 +32,7 @@ func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 		},
 	)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Couldn't create user:; %v", err))
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't create user"})
 	}
 
 	return c.JSON(
@@ -46,19 +46,60 @@ func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 	)
 }
 
+// Handles updating user's email address and/or password.
+// Gets email and password from request and hashes the password.
+// Uses the token given to find the user_id of the user to update and makes the update.
+func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
+	token, err := auth.GetBearerToken(c.Request().Header)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Missing or malformed token"})
+	}
+
+	user_id, err := auth.ValidateJWT(token, cfg.Secret)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Invalid bearerToken for user"})
+	}
+
+	hashedPassword, email, statusCode, err := getHashedPasswordAndEmail(c)
+	if err != nil {
+		return c.JSON(statusCode, echo.Map{"Error": err})
+	}
+
+	user, err := cfg.DbQueries.UpdateUser(
+		c.Request().Context(),
+		database.UpdateUserParams{
+			Email:          email,
+			HashedPassword: hashedPassword,
+			ID:             user_id,
+		},
+	)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't update user"})
+	}
+
+	return c.JSON(http.StatusOK,
+		User{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			Email:     user.Email,
+		},
+	)
+}
+
 // Decodes email and password from request hashes the password then returns the email and hashed password.
-func getHashedPasswordAndEmail(c echo.Context) (string, string, error) {
+func getHashedPasswordAndEmail(c echo.Context) (string, string, int, error) {
 	decoder := json.NewDecoder(c.Request().Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		return "", "", c.JSON(http.StatusInternalServerError, echo.Map{"Error": fmt.Sprintf("Couldn't decode parameters: %v", err)})
+		return "", "", http.StatusInternalServerError, errors.New("couldn't decode parameters")
 	}
 
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		return "", "", c.JSON(http.StatusInternalServerError, echo.Map{"Error": fmt.Sprintf("Couldn't create hashed password: %v", err)})
+		return "", "", http.StatusBadRequest, errors.New("couldn't create hashed password")
 	}
 
-	return hashedPassword, params.Email, nil
+	return hashedPassword, params.Email, 0, nil
 }
