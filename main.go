@@ -15,6 +15,7 @@ import (
 
 func main() {
 	const filepathRoot = "."
+	const staticDir = "static"
 	const port = "8080"
 
 	// Use environment variables to set up server's environment and saving them in a struct
@@ -41,12 +42,16 @@ func main() {
 		FileserverHits: atomic.Int32{},
 		DbQueries:      dbQueries,
 		FilepathRoot:   filepathRoot,
+		StaticDir:      staticDir,
 		Platform:       platform,
 		Secret:         jwtSecret,
 	}
 
 	// Set up the server
 	e := echo.New()
+
+	e.Static("/static", "static")
+
 	cfg.RegisterRoutes(e)
 
 	// Create a group for routes starting with /app

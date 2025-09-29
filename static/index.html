@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notey - Notes App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Notey</h1>
+        <nav>
+            <button id="logoutBtn" class="hidden">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="authSection">
+            <div id="registrationSection">
+                <h2>If Not Registered Yet</h2>
+                <form id="registrationForm">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <button type="submit" id="regSubmitBtn">Register</button>
+                </form>
+            </div>
+
+            <div id="formSection">
+                <h2>Login</h2>
+                <form id="userForm">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit" id="submitBtn">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="notesSection" class="hidden">
+            <h2>Your Notes</h2>
+            <form id="noteForm">
+                <input type="text" id="noteTitle" placeholder="Title" required>
+                <textarea id="noteContent" placeholder="Content" required></textarea>
+                <button type="submit">Add Note</button>
+            </form>
+            <ul id="notesList"></ul>
+        </section>
+
+        <section id="metricsSection" class="hidden">
+            <h2>Metrics</h2>
+            <div id="metricsDisplay"></div>
+        </section>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

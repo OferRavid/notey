@@ -15,11 +15,11 @@ func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
 	e.POST("/api/revoke", cfg.handlerRevokeToken)
 
 	// Routes to handle notes
-	e.GET("/notes", cfg.handlerRetrieveNotes, cfg.Middleware())
-	e.GET("/notes:noteID", cfg.handlerGetNoteByID, cfg.Middleware())
-	e.POST("/notes", cfg.handlerCreateNote, cfg.Middleware())
-	e.PUT("/notes/:id", cfg.handlerUpdateNote, cfg.Middleware())
-	e.DELETE("/notes/:noteID", cfg.handlerDeleteNote, cfg.Middleware())
+	e.GET("/api/notes", cfg.handlerRetrieveNotes, cfg.Middleware())
+	e.GET("/api/notes:noteID", cfg.handlerGetNoteByID, cfg.Middleware())
+	e.POST("/api/notes", cfg.handlerCreateNote, cfg.Middleware())
+	e.PUT("/api/notes/:noteID", cfg.handlerUpdateNote, cfg.Middleware())
+	e.DELETE("/api/notes/:noteID", cfg.handlerDeleteNote, cfg.Middleware())
 
 	// Admin only routes
 	e.POST("/admin/reset", cfg.handlerReset)

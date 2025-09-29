@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3aadd;
+}
+
+header {
+    background-color: #2fe7e7;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+nav button {
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+main {
+    padding: 20px;
+}
+
+.hidden {
+    display: none; /* Ensure sections are hidden */
+}
+
+#notesList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#notesList li {
+    background: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #0e24f1;
+}

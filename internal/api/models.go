@@ -12,6 +12,7 @@ type ApiConfig struct {
 	FileserverHits atomic.Int32
 	DbQueries      *database.Queries
 	FilepathRoot   string
+	StaticDir      string
 	Platform       string
 	Secret         string
 }
