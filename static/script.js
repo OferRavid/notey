@@ -1,6 +1,7 @@
 const apiUrl = "http://localhost:8080/api"; // Change this if your server runs on a different URL
 const authSection = ["registrationSection", "formSection"];
 let jwtToken = "";
+let noteCount = 0;
 
 // Function to show/hide sections
 function showSection(sectionsID) {
@@ -51,7 +52,8 @@ document.getElementById("registrationForm").addEventListener("submit", async (ev
             const data = await loginResponse.json();
             jwtToken = data.token; // Store the token after login
             localStorage.setItem("jwtToken", jwtToken); // Save the token to localStorage
-            showNotes(true); // Go to notes section after successful login
+            localStorage.setItem("noteCount", String(noteCount)) // Save a note counter to localStorage
+            showNotes(); // Go to notes section after successful login
         } else {
             const errorText = await loginResponse.json();
             alert("Error: " + errorText.Error);
@@ -106,6 +108,9 @@ document.getElementById("noteForm").addEventListener("submit", async (event) => 
     });
 
     if (response.ok) {
+        noteCount = parseInt(localStorage.getItem("noteCount"))
+        noteCount += 1
+        localStorage.setItem("noteCount", String(noteCount))
         loadNotes(); // Reload notes after adding
         document.getElementById("noteForm").reset(); // Reset form
     } else {
@@ -116,15 +121,15 @@ document.getElementById("noteForm").addEventListener("submit", async (event) => 
 });
 
 // Show notes section
-function showNotes(isNew = false) {
+function showNotes() {
     showSection(["notesSection"]);
     document.getElementById("logoutBtn").classList.remove("hidden");
-    loadNotes(isNew);
+    loadNotes();
 }
 
 // Load notes from the API
-async function loadNotes(isNew) {
-    if (isNew) { return; }
+async function loadNotes() {
+    if (parseInt(localStorage.getItem("noteCount")) === 0) { return; }
     const response = await fetch(`${apiUrl}/notes`, {
         headers: {
             "Authorization": `Bearer ${jwtToken}`
