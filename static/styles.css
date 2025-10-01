@@ -1,8 +1,9 @@
 body {
+    position: relative;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f3aadd;
+    background-color: rgb(248, 130, 156);
 }
 
 header {
@@ -13,7 +14,9 @@ header {
 }
 
 nav button {
-    margin: 0 10px;
+    position: absolute;
+    top: 50px;
+    right: 40px;
     cursor: pointer;
 }
 
@@ -26,13 +29,20 @@ main {
 }
 
 #notesList {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
 #notesList li {
-    background: #fff;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid #0e24f1;
+    color: black !important;
+    display: inline-block;
+    width: 250px; /* Adjust as needed */
+    height: 350px; /* Adjust as needed */
+    background-image: url('note.jpg');
+    background-size: cover; /* or cover, or specific dimensions */
+    background-repeat: no-repeat;
+    margin-right: 25px;
+    padding-left: 15px;
+    padding-top: 50 px;
+    vertical-align: middle; /* Align with text */
 }
