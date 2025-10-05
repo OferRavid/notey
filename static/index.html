@@ -36,13 +36,27 @@
         </section>
 
         <section id="notesSection" class="hidden">
-            <h2>Your Notes</h2>
+            <h2 id="notesH2"></h2>
             <form id="noteForm">
                 <input type="text" id="noteTitle" placeholder="Title" required>
                 <textarea id="noteContent" placeholder="Content" required></textarea>
                 <button type="submit">Add Note</button>
             </form>
-            <ul id="notesList"></ul>
+            <ul id="notesList">
+                <li>
+                    
+                        <button class="edit-button">
+                            <span class="edit-button-text">Edit</span>
+                        </button>
+                        
+                        
+                        <button class="delete-button">
+                            <span class="del-button-text">Delete</span>
+                        </button>
+                        
+                        
+                </li>
+            </ul>
         </section>
 
         <section id="metricsSection" class="hidden">

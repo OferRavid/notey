@@ -1,6 +1,9 @@
 const apiUrl = "http://localhost:8080/api"; // Change this if your server runs on a different URL
 const authSection = ["registrationSection", "formSection"];
 let jwtToken = "";
+let refreshToken = "";
+let userID = "";
+let userEmail = "";
 let noteCount = 0;
 
 // Function to show/hide sections
@@ -51,8 +54,14 @@ document.getElementById("registrationForm").addEventListener("submit", async (ev
         if (loginResponse.ok) {
             const data = await loginResponse.json();
             jwtToken = data.token; // Store the token after login
+            refreshToken = data.refreshToken; // Store the refresh token after login
+            userID = data.userID; // Store the user's ID after login
+            userEmail = data.userEmail; // Store the user's email after login
             localStorage.setItem("jwtToken", jwtToken); // Save the token to localStorage
-            localStorage.setItem("noteCount", String(noteCount)) // Save a note counter to localStorage
+            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem("userID", userID);
+            localStorage.setItem("userEmail", userEmail);
+            localStorage.setItem("noteCount", String(noteCount)); // Save a note counter to localStorage
             showNotes(); // Go to notes section after successful login
         } else {
             const errorText = await loginResponse.json();
@@ -83,7 +92,15 @@ document.getElementById("userForm").addEventListener("submit", async (event) => 
     if (loginResponse.ok) {
         const data = await loginResponse.json();
         jwtToken = data.token; // Store the token after login
+        refreshToken = data.refreshToken; // Store the refresh token after login
+        userID = data.userID; // Store the user's ID after login
+        userEmail = data.userEmail; // Store the user's email after login
+        noteCount = getNoteCount(userID)
         localStorage.setItem("jwtToken", jwtToken); // Save the token to localStorage
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userID", userID);
+        localStorage.setItem("userEmail", userEmail);
+        localStorage.setItem("noteCount", String(noteCount));
         showNotes(); // Go to notes section after successful login
     } else {
         const errorText = await loginResponse.json();
@@ -120,17 +137,36 @@ document.getElementById("noteForm").addEventListener("submit", async (event) => 
     }
 });
 
+async function getNoteCount(userID) {
+    const response = await fetch(`${apiUrl}/notes/?author_id=${userID}`, {
+        headers: {
+            "Authorization": `Bearer ${jwtToken}`
+        }
+    });
+
+    let notes = []; // Initialize notes as an empty array
+
+    // Check if the response is okay
+    if (response.ok) {
+        // Try to parse the response as JSON
+        notes = await response.json();
+        return notes.length;
+    }
+    return 0;
+}
+
 // Show notes section
 function showNotes() {
     showSection(["notesSection"]);
     document.getElementById("logoutBtn").classList.remove("hidden");
+    document.getElementById("notesH2").textContent = `${localStorage.getItem("userEmail")}'s notes`
     loadNotes();
 }
 
 // Load notes from the API
 async function loadNotes() {
     if (parseInt(localStorage.getItem("noteCount")) === 0) { return; }
-    const response = await fetch(`${apiUrl}/notes`, {
+    const response = await fetch(`${apiUrl}/notes/?author_id=${localStorage.getItem("userID")}`, {
         headers: {
             "Authorization": `Bearer ${jwtToken}`
         }
@@ -171,6 +207,13 @@ async function loadNotes() {
 // Handle logout
 document.getElementById("logoutBtn").addEventListener("click", () => {
     jwtToken = ""; // Clear the token
+    refreshToken = "";
+    userID = "";
+    noteCount = 0;
+    localStorage.setItem("jwtToken", jwtToken);
+    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("userID", userID);
+    localStorage.setItem("noteCount", String(noteCount));
     document.getElementById("logoutBtn").classList.add("hidden");
     showSection(authSection); // Show both registration and login sections
 });

@@ -59,8 +59,8 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 
 // Handles getting all the user's notes.
 func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
-	author_id := c.Request().URL.Query().Get("author_id")
-	// sortType := c.Request().URL.Query().Get("sort")
+	author_id := c.QueryParam("author_id")
+	// sortType := c.QueryParam("sort")
 	dbNotes, err := cfg.DbQueries.GetNotes(c.Request().Context())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't retrieve notes"})
