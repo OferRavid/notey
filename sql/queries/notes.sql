@@ -5,9 +5,9 @@ VALUES (
 )
 RETURNING *;
 
--- name: GetNotes :many
+-- name: GetNotesByUserID :many
 SELECT * FROM notes
-ORDER BY created_at ASC;
+WHERE user_id = $1;
 
 -- name: GetNoteByID :one
 SELECT * FROM notes

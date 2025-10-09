@@ -1,8 +1,10 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"sort"
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
@@ -59,19 +61,19 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 
 // Handles getting all the user's notes.
 func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
-	author_id := c.QueryParam("author_id")
+	// author_id := c.QueryParam("author_id")
 	// sortType := c.QueryParam("sort")
-	dbNotes, err := cfg.DbQueries.GetNotes(c.Request().Context())
+	notes := []Note{}
+	user_id := c.Get("user_id").(uuid.UUID)
+	dbNotes, err := cfg.DbQueries.GetNotesByUserID(c.Request().Context(), user_id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusNoContent, notes)
+		}
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't retrieve notes"})
-
 	}
 
-	notes := []Note{}
 	for _, dbNote := range dbNotes {
-		if author_id != "" && author_id != dbNote.UserID.String() {
-			continue
-		}
 		notes = append(notes, Note{
 			ID:        dbNote.ID,
 			CreatedAt: dbNote.CreatedAt,
@@ -82,16 +84,14 @@ func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
 		})
 	}
 
-	// if sortType == "desc" {
-	// 	sort.Slice(notes, func(i, j int) bool { return notes[i].CreatedAt.After(notes[j].CreatedAt) })
-	// }
+	sort.Slice(notes, func(i, j int) bool { return notes[i].CreatedAt.After(notes[j].CreatedAt) })
 
 	return c.JSON(http.StatusOK, notes)
 }
 
 // Handles getting one note using it's ID.
 func (cfg *ApiConfig) handlerGetNoteByID(c echo.Context) error {
-	noteID, err := uuid.Parse(c.Request().PathValue("noteID"))
+	noteID, err := uuid.Parse(c.Param("noteID"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse noteID"})
 

@@ -69,13 +69,13 @@ func (q *Queries) GetNoteByID(ctx context.Context, id uuid.UUID) (Note, error) {
 	return i, err
 }
 
-const getNotes = `-- name: GetNotes :many
+const getNotesByUserID = `-- name: GetNotesByUserID :many
 SELECT id, created_at, updated_at, title, content, user_id FROM notes
-ORDER BY created_at ASC
+WHERE user_id = $1
 `
 
-func (q *Queries) GetNotes(ctx context.Context) ([]Note, error) {
-	rows, err := q.db.QueryContext(ctx, getNotes)
+func (q *Queries) GetNotesByUserID(ctx context.Context, userID uuid.UUID) ([]Note, error) {
+	rows, err := q.db.QueryContext(ctx, getNotesByUserID, userID)
 	if err != nil {
 		return nil, err
 	}
