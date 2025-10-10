@@ -8,7 +8,8 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to Notey</h1>
+        <h1>Notey</h1>
+        <h2>A not so naughty way to manage your notes!</h2>
         <nav>
             <button id="logoutBtn" class="hidden">Logout</button>
         </nav>
@@ -42,21 +43,7 @@
                 <textarea id="noteContent" placeholder="Content" required></textarea>
                 <button type="submit">Add Note</button>
             </form>
-            <ul id="notesList">
-                <li>
-                    
-                        <button class="edit-button">
-                            <span class="edit-button-text">Edit</span>
-                        </button>
-                        
-                        
-                        <button class="delete-button">
-                            <span class="del-button-text">Delete</span>
-                        </button>
-                        
-                        
-                </li>
-            </ul>
+            <ul id="notesList"></ul>
         </section>
 
         <section id="metricsSection" class="hidden">

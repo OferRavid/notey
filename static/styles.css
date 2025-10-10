@@ -10,7 +10,7 @@ header {
     background-color: #2fe7e7;
     color: black;
     padding: 1rem;
-    text-align: center;
+    text-align: left;
 }
 
 nav button {
@@ -51,10 +51,10 @@ li {
     /* position: relative; Needed for positioning the text relative to the container */
 /* } */
 
-.edit-button {
+edit-button {
     position: absolute;
     top: 5px;
-    right: 5px;
+    right: 35px;
     background-image: url('images/edit_icon.jpg');
     background-color: transparent; /* Remove any solid background color */
     background-size: contain;      /* Or 'cover', to scale the image */
@@ -62,14 +62,14 @@ li {
     background-position: center;
     padding: 5px 10px;
     border: none;
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
     cursor: pointer;
     filter: invert(100%);
 }
 
 /* The text that will be shown on hover */
-.edit-button-text {
+edit-button-text {
     /* Hide the text by default */
     visibility: hidden;
     opacity: 0;
@@ -89,7 +89,7 @@ li {
 }
 
 /* Show the text when the parent container is hovered over */
-.edit-button:hover .edit-button-text {
+edit-button:hover edit-button-text {
     visibility: visible;
     opacity: 1;
 }
@@ -99,9 +99,9 @@ li {
     position: relative; /* Needed for positioning the text relative to the container 
 } */
 
-.delete-button {
+delete-button {
     position: absolute;
-    bottom: 5px;
+    top: 5px;
     right: 5px;
     background-image: url('images/bin_icon.jpg');
     background-color: transparent; /* Remove any solid background color */
@@ -110,13 +110,13 @@ li {
     background-position: center;
     padding: 5px 10px;
     border: none;
-    width: 20px;
-    height: 35px;
+    width: 10px;
+    height: 15px;
     cursor: pointer;
 }
 
 /* The text that will be shown on hover */
-.del-button-text {
+del-button-text {
     /* Hide the text by default */
     visibility: hidden;
     opacity: 0;
@@ -136,7 +136,7 @@ li {
 }
 
 /* Show the text when the parent container is hovered over */
-.delete-button:hover .del-button-text {
+delete-button:hover del-button-text {
     visibility: visible;
     opacity: 1;
 }

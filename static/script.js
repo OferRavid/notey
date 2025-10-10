@@ -171,11 +171,56 @@ async function loadNotes() {
     } else {
         // If there are notes, display them
         notes.forEach(note => {
+            // Creating elements to design the note in the document
             const li = document.createElement("li");
-            li.innerHTML = `<strong>${note.title}</strong><p>${note.content}</p>`;
+            const editButton = document.createElement("edit-button");
+            const editText = document.createElement("edit-button-text");
+            const deleteButton = document.createElement("delete-button");
+            const deleteText = document.createElement("del-button-text");
+
+            // Adding the note's content to the new list item
+            li.innerHTML = `<strong style='font-size: 20px;'><u>${note.title}</u></strong><p style='font-size: 16px;'>${note.content}</p>`;
+
+            // Designing the edit button
+            editButton.classList.add("edit-button");
+            editText.classList.add("edit-button-text");
+            editText.textContent = "Edit";
+            editButton.appendChild(editText);
+            editButton.setAttribute("noteID", note.id);
+            editButton.addEventListener('click', (event) => {
+                const clickedButton = event.target;
+                const noteID = clickedButton.getAttribute("noteID")
+                editNote(noteID);
+            });
+
+            // Designing the delete button
+            deleteButton.classList.add("delete-button");
+            deleteText.classList.add("del-button-text");
+            deleteText.textContent = "Delete";
+            deleteButton.appendChild(deleteText);
+            deleteButton.setAttribute("noteID", note.id);
+            deleteButton.addEventListener('click', (event) => {
+                const clickedButton = event.target;
+                const noteID = clickedButton.getAttribute("noteID")
+                deleteNote(noteID);
+            });
+
+            // Adding al the elements to the list
+            li.appendChild(editButton);
+            li.appendChild(deleteButton);
             notesList.appendChild(li);
         });
     }
+}
+
+function deleteNote(noteID) {
+    console.log(`deleting note with id: ${noteID}`);
+    showNotes();
+}
+
+function editNote(noteID) {
+    console.log(`editting note with id: ${noteID}`);
+    showNotes();
 }
 
 // Handle logout
