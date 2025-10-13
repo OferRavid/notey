@@ -10,9 +10,6 @@
     <header>
         <h1>Notey</h1>
         <h2>A not so naughty way to manage your notes!</h2>
-        <nav>
-            <button id="logoutBtn" class="hidden">Logout</button>
-        </nav>
     </header>
 
     <main>
@@ -35,21 +32,7 @@
                 </form>
             </div>
         </section>
-
-        <section id="notesSection" class="hidden">
-            <h2 id="notesH2"></h2>
-            <form id="noteForm">
-                <input type="text" id="noteTitle" placeholder="Title" required>
-                <textarea id="noteContent" placeholder="Content" required></textarea>
-                <button type="submit">Add Note</button>
-            </form>
-            <ul id="notesList"></ul>
-        </section>
-
-        <section id="metricsSection" class="hidden">
-            <h2>Metrics</h2>
-            <div id="metricsDisplay"></div>
-        </section>
+        
     </main>
 
     <script src="/static/script.js"></script>

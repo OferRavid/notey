@@ -12,6 +12,6 @@ func (cfg *ApiConfig) ServeStaticFiles(c echo.Context) error {
 
 	// Strip the prefix /app and serve the requested file
 	filePath := filepath.Join(cfg.FilepathRoot, c.Request().URL.Path[len("/app/"):])
-	staticPath := filepath.Join(filePath, cfg.StaticDir)
+	staticPath := filepath.Join(cfg.StaticDir, filePath)
 	return c.File(staticPath)
 }

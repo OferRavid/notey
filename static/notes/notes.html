@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notey - Notes App</title>
+    <link rel="stylesheet" href="/static/notes/notes.css">
+</head>
+<body>
+    <header>
+        <div class="header-image-container">
+            <img src="../images/header.png" alt="Your header image">
+        </div>
+        <div class="header-content">
+            <h1>Notey</h1>
+            <h2>A not so naughty way to manage your notes!</h2>
+        <nav>
+            <button id="logoutBtn">Logout</button>
+        </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="notesSection">
+            <h2 id="notesH2"></h2>
+            <form id="noteForm">
+                <input type="text" id="noteTitle" placeholder="Title" required>
+                <textarea id="noteContent" placeholder="Content" required></textarea>
+                <button type="submit">Add Note</button>
+            </form>
+            <ul id="notesList"></ul>
+        </section>
+
+    </main>
+
+    <script src="/static/notes/notes.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+body {
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    position: relative;
+    background-color: #2fe7e7;
+    height: 120px;
+}
+
+.header-image-container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.header-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+    color: rgb(255, 60, 157);
+    text-align: center;
+}
+
+nav button {
+    position: absolute;
+    top: 50px;
+    right: 40px;
+    cursor: pointer;
+}
+
+main {
+    background-image: url('../images/board.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding: 4.5rem;
+}
+
+#notesList ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    position: relative;
+    color: rgb(0, 255, 0);
+    display: inline-block;
+    width: 250px; /* Adjust as needed */
+    height: 350px; /* Adjust as needed */
+    background-image: url('../images/note.jpg');
+    background-size: cover; /* or cover, or specific dimensions */
+    background-repeat: no-repeat;
+    margin-right: 25px;
+    padding-left: 25px;
+    vertical-align: middle; /* Align with text */
+}
+
+edit-button {
+    position: absolute;
+    top: 5px;
+    right: 35px;
+    background-image: url('../images/edit_icon.jpg');
+    background-color: transparent; /* Remove any solid background color */
+    background-size: contain;      /* Or 'cover', to scale the image */
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 5px 10px;
+    border: none;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    filter: invert(100%);
+}
+
+/* The text that will be shown on hover */
+edit-button-text {
+    /* Hide the text by default */
+    visibility: hidden;
+    opacity: 0;
+    
+    /* Position the text so it appears next to the button */
+    position: absolute;
+    top: 100%;
+    transform: translateX(-50%);
+
+    /* Add some basic styling for the tooltip effect */
+    color: rgb(1, 43, 1);
+    white-space: nowrap; /* Prevents the text from wrapping */
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+    transition: opacity 0.3s; /* Smooth fade-in effect */
+}
+
+/* Show the text when the parent container is hovered over */
+edit-button:hover edit-button-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-image: url('../images/bin_icon.jpg');
+    background-color: transparent; /* Remove any solid background color */
+    background-size: contain;      /* Or 'cover', to scale the image */
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 5px 10px;
+    border: none;
+    width: 10px;
+    height: 15px;
+    cursor: pointer;
+}
+
+/* The text that will be shown on hover */
+del-button-text {
+    /* Hide the text by default */
+    visibility: hidden;
+    opacity: 0;
+    
+    /* Position the text so it appears next to the button */
+    position: absolute;
+    top: 100%;
+    transform: translateX(-50%);
+
+    /* Add some basic styling for the tooltip effect */
+    color: rgb(0, 255, 0);
+    white-space: nowrap; /* Prevents the text from wrapping */
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+    transition: opacity 0.3s; /* Smooth fade-in effect */
+}
+
+/* Show the text when the parent container is hovered over */
+delete-button:hover del-button-text {
+    visibility: visible;
+    opacity: 1;
+}
