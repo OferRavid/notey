@@ -18,3 +18,7 @@ WHERE token = $1;
 UPDATE refresh_tokens
 SET updated_at = NOW(), revoked_at = NOW()
 WHERE token = $1;
+
+-- name: ClearRevokedTokens :exec
+DELETE FROM refresh_tokens *
+WHERE revoked_at is not null;

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
 	"sync/atomic"
+	"time"
 
 	"github.com/OferRavid/notey/internal/api"
 	"github.com/OferRavid/notey/internal/database"
@@ -36,6 +38,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to open db: %s\n", err)
 	}
+	defer db.Close()
+
+	// Use db.Ping() to confirm the connection is valid
+	if err = db.Ping(); err != nil {
+		log.Fatalf("Failed to connect to the database: %v", err)
+	}
+
 	dbQueries := database.New(db)
 
 	cfg := &api.ApiConfig{
@@ -49,6 +58,16 @@ func main() {
 
 	// Set up the server
 	e := echo.New()
+
+	go func() {
+		// Create a ticker that ticks every hour.
+		ticker := time.NewTicker(time.Hour)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			cfg.DbQueries.ClearRevokedTokens(context.Background())
+		}
+	}()
 
 	e.Static("/static", "static")
 

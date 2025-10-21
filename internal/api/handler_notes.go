@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -19,25 +18,16 @@ type NoteParams struct {
 
 // Handles creation of a new note for user.
 func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
-	bearerToken, err := auth.GetBearerToken(c.Request().Header)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Missing token in Authorization header"})
-
-	}
 
 	decoder := json.NewDecoder(c.Request().Body)
 	params := NoteParams{}
-	err = decoder.Decode(&params)
+	err := decoder.Decode(&params)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't decode parameters"})
 
 	}
 
-	user_id, err := auth.ValidateJWT(bearerToken, cfg.Secret)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Couldn't validate token"})
-
-	}
+	user_id := c.Get("user_id").(uuid.UUID)
 
 	note, err := cfg.DbQueries.CreateNote(c.Request().Context(), database.CreateNoteParams{
 		Title:   params.Title,
@@ -92,6 +82,7 @@ func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
 // Handles getting one note using it's ID.
 func (cfg *ApiConfig) handlerGetNoteByID(c echo.Context) error {
 	noteID, err := uuid.Parse(c.Param("noteID"))
+	user_id := c.Get("user_id").(uuid.UUID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse noteID"})
 
@@ -100,6 +91,10 @@ func (cfg *ApiConfig) handlerGetNoteByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{"Error": "Couldn't retrieve note"})
 
+	}
+
+	if user_id != note.UserID {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to view note"})
 	}
 
 	return c.JSON(http.StatusOK, Note{
@@ -114,17 +109,10 @@ func (cfg *ApiConfig) handlerGetNoteByID(c echo.Context) error {
 
 // Handles updating content and/or title of a note.
 func (cfg *ApiConfig) handlerUpdateNote(c echo.Context) error {
-	token, err := auth.GetBearerToken(c.Request().Header)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Missing or malformed token"})
-	}
 
-	user_id, err := auth.ValidateJWT(token, cfg.Secret)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Invalid bearerToken for user"})
-	}
+	user_id := c.Get("user_id").(uuid.UUID)
 
-	noteID, err := uuid.Parse(c.Request().PathValue("noteID"))
+	noteID, err := uuid.Parse(c.Param("noteID"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse noteID"})
 
@@ -136,7 +124,7 @@ func (cfg *ApiConfig) handlerUpdateNote(c echo.Context) error {
 	}
 
 	if note.UserID != user_id {
-		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to delete note"})
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to edit note"})
 	}
 
 	noteParams := NoteParams{}
@@ -171,15 +159,7 @@ func (cfg *ApiConfig) handlerUpdateNote(c echo.Context) error {
 
 // Handles deletion of a note.
 func (cfg *ApiConfig) handlerDeleteNote(c echo.Context) error {
-	bearerToken, err := auth.GetBearerToken(c.Request().Header)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Missing token in Authorization header"})
-	}
-
-	user_id, err := auth.ValidateJWT(bearerToken, cfg.Secret)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Couldn't validate token"})
-	}
+	user_id := c.Get("user_id").(uuid.UUID)
 
 	noteID, err := uuid.Parse(c.Request().PathValue("noteID"))
 	if err != nil {
@@ -191,7 +171,7 @@ func (cfg *ApiConfig) handlerDeleteNote(c echo.Context) error {
 	}
 
 	if note.UserID != user_id {
-		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to delete note"})
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to delete note"})
 	}
 
 	err = cfg.DbQueries.DeleteNote(c.Request().Context(), note.ID)

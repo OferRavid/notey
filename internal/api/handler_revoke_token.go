@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -16,7 +17,10 @@ func (cfg *ApiConfig) handlerRevokeToken(c echo.Context) error {
 
 	refreshToken, err := cfg.DbQueries.GetRefreshTokenByToken(c.Request().Context(), refresh_token)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Refresh token doesn't exist"})
+		if err == sql.ErrNoRows {
+			return c.JSON(http.StatusNotFound, echo.Map{"Error": "Refresh token doesn't exist"})
+		}
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Bad response from database"})
 	}
 	if time.Now().After(refreshToken.ExpiresAt) || refreshToken.RevokedAt.Valid {
 		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Refresh token already expired"})

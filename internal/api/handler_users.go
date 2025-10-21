@@ -7,6 +7,7 @@ import (
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -85,6 +86,27 @@ func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 			Email:     user.Email,
 		},
 	)
+}
+
+// Handles user removal.
+func (cfg *ApiConfig) handlerDeleteUser(c echo.Context) error {
+	user_id := c.Get("user_id").(uuid.UUID)
+
+	userID, err := uuid.Parse(c.Request().PathValue("userID"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse userID"})
+	}
+
+	if userID != user_id {
+		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to remove user"})
+	}
+
+	err = cfg.DbQueries.RemoveUser(c.Request().Context(), userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Failed to remove user"})
+	}
+
+	return c.JSON(http.StatusNoContent, nil)
 }
 
 // Decodes email and password from request hashes the password then returns the email and hashed password.
