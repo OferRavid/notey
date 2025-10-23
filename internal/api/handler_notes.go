@@ -74,7 +74,7 @@ func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
 		})
 	}
 
-	sort.Slice(notes, func(i, j int) bool { return notes[i].CreatedAt.After(notes[j].CreatedAt) })
+	sort.Slice(notes, func(i, j int) bool { return notes[i].CreatedAt.Before(notes[j].CreatedAt) })
 
 	return c.JSON(http.StatusOK, notes)
 }
@@ -94,7 +94,7 @@ func (cfg *ApiConfig) handlerGetNoteByID(c echo.Context) error {
 	}
 
 	if user_id != note.UserID {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to view note"})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to view note"})
 	}
 
 	return c.JSON(http.StatusOK, Note{
@@ -124,7 +124,7 @@ func (cfg *ApiConfig) handlerUpdateNote(c echo.Context) error {
 	}
 
 	if note.UserID != user_id {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to edit note"})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to edit note"})
 	}
 
 	noteParams := NoteParams{}
@@ -171,7 +171,7 @@ func (cfg *ApiConfig) handlerDeleteNote(c echo.Context) error {
 	}
 
 	if note.UserID != user_id {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to delete note"})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to delete note"})
 	}
 
 	err = cfg.DbQueries.DeleteNote(c.Request().Context(), note.ID)

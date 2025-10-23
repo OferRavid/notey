@@ -27,11 +27,14 @@ func (cfg *ApiConfig) handlerRefreshToken(c echo.Context) error {
 		Error   string `json:"error"`
 		Revoked bool   `json:"revoked"`
 	}
-	if time.Now().After(refreshToken.ExpiresAt) || refreshToken.RevokedAt.Valid {
-		return c.JSON(http.StatusUnauthorized, errorResponse{
-			Error:   "Refresh token expired",
-			Revoked: refreshToken.RevokedAt.Valid,
-		})
+	if time.Now().After(refreshToken.ExpiresAt) {
+		if refreshToken.RevokedAt.Valid {
+			return c.JSON(http.StatusForbidden, errorResponse{
+				Error:   "Refresh token expired",
+				Revoked: refreshToken.RevokedAt.Valid,
+			})
+		}
+		return cfg.handlerRevokeToken(c)
 	}
 
 	token, err := auth.MakeJWT(refreshToken.UserID, cfg.Secret, time.Hour)

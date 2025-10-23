@@ -5,10 +5,14 @@ import (
 )
 
 func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
+	// 404 - Not Found error handler
+	e.HTTPErrorHandler = handlerNotFoundError
+
 	// Routes to handle users
 	e.POST("/api/users", cfg.handlerCreateUser)
 	e.POST("/api/login", cfg.handlerLogin)
 	e.PUT("/api/users", cfg.handlerUpdateUserData, cfg.Middleware())
+	e.DELETE("/api/users/:userID", cfg.handlerDeleteUser, cfg.Middleware())
 
 	// Routes to hanlde refresh token
 	e.POST("/api/refresh", cfg.handlerRefreshToken)

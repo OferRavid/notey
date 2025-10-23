@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"net/http"
-	"time"
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/labstack/echo/v4"
@@ -22,8 +21,8 @@ func (cfg *ApiConfig) handlerRevokeToken(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Bad response from database"})
 	}
-	if time.Now().After(refreshToken.ExpiresAt) || refreshToken.RevokedAt.Valid {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Refresh token already expired"})
+	if refreshToken.RevokedAt.Valid {
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Refresh token already expired"})
 	}
 
 	err = cfg.DbQueries.UpdateRefreshToken(c.Request().Context(), refreshToken.Token)

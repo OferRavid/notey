@@ -6,15 +6,16 @@ import (
 
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/google/uuid"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type ApiConfig struct {
-	FileserverHits atomic.Int32
-	DbQueries      *database.Queries
-	FilepathRoot   string
-	StaticDir      string
-	Platform       string
-	Secret         string
+	FileserverHits  atomic.Int32
+	PageVisitsGauge prometheus.Gauge
+	DbQueries       *database.Queries
+	StaticDir       string
+	Platform        string
+	Secret          string
 }
 
 type User struct {

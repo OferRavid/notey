@@ -11,14 +11,23 @@ import (
 	"github.com/OferRavid/notey/internal/api"
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
+	"github.com/prometheus/client_golang/prometheus"
+
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	const filepathRoot = "."
 	const staticDir = "static"
 	const port = "8080"
+
+	var pageVisitsGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "page_visits_gauge",
+			Help: "Current number of visits to the app page.",
+		},
+	)
 
 	// Use environment variables to set up server's environment and saving them in a struct
 	godotenv.Load()
@@ -48,16 +57,25 @@ func main() {
 	dbQueries := database.New(db)
 
 	cfg := &api.ApiConfig{
-		FileserverHits: atomic.Int32{},
-		DbQueries:      dbQueries,
-		FilepathRoot:   filepathRoot,
-		StaticDir:      staticDir,
-		Platform:       platform,
-		Secret:         jwtSecret,
+		FileserverHits:  atomic.Int32{},
+		PageVisitsGauge: pageVisitsGauge,
+		DbQueries:       dbQueries,
+		StaticDir:       staticDir,
+		Platform:        platform,
+		Secret:          jwtSecret,
 	}
 
 	// Set up the server
 	e := echo.New()
+
+	// Register your custom metric before using it
+	prometheus.MustRegister(cfg.PageVisitsGauge)
+
+	// Add middleware for collecting standard metrics
+	e.Use(echoprometheus.NewMiddleware("myapp"))
+
+	// Route to expose the combined metrics
+	e.GET("/metrics", echoprometheus.NewHandler())
 
 	go func() {
 		// Create a ticker that ticks every hour.
@@ -80,6 +98,6 @@ func main() {
 	// Use the custom handler to serve static files
 	appGroup.GET("/*", cfg.ServeStaticFiles)
 
-	log.Printf("Serving files from %s on port: %s\n", filepathRoot, port)
+	log.Printf("Serving files on port: %s\n", port)
 	e.Logger.Fatal(e.Start(":" + port))
 }

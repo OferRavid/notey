@@ -7,30 +7,37 @@
     <link rel="stylesheet" href="/static/notes/notes.css">
 </head>
 <body>
-    <header>
-        <div class="header-image-container">
-            <img src="../images/header.png" alt="Your header image">
+    <div class="header-form-wrapper">
+        <header>
+            <div class="header-content">
+                <h1 style='font-size: 56px;'>Notey</h1>
+                <h2 style="font-size: 40px;">A not so naughty way to manage your notes!</h2>
+            <nav>
+                <button id="logout-button">Logout</button>
+            </nav>
+            </div>
+        </header>
+        <div class="new-note-container">
+            <div class="new-note">
+                <form id="note-form">New Note Form
+                    <input type="text" id="note-title" placeholder="Title" required>
+                    <textarea id="note-content" placeholder="Content" required></textarea>
+                    <button type="submit">Add Note</button>
+                </form>
+            </div>
         </div>
-        <div class="header-content">
-            <h1>Notey</h1>
-            <h2>A not so naughty way to manage your notes!</h2>
-        <nav>
-            <button id="logoutBtn">Logout</button>
-        </nav>
-        </div>
-    </header>
-
+    </div>
     <main>
-        <section id="notesSection">
-            <h2 id="notesH2"></h2>
-            <form id="noteForm">
-                <input type="text" id="noteTitle" placeholder="Title" required>
-                <textarea id="noteContent" placeholder="Content" required></textarea>
-                <button type="submit">Add Note</button>
-            </form>
-            <ul id="notesList"></ul>
-        </section>
+        <div id="notes-section">
+            <h2 id="notes-h2"></h2>
+            <ul id="notes-list"></ul>
+        </div>
 
+        <div>
+            <p>
+                <a href="/app/" onclick="history.back(); return false;">Go Back</a>
+            </p>
+        </div>
     </main>
 
     <script src="/static/notes/notes.js"></script>

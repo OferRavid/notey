@@ -9,9 +9,10 @@ import (
 func (cfg *ApiConfig) ServeStaticFiles(c echo.Context) error {
 	// Increment the hit counter
 	cfg.FileserverHits.Add(1)
+	cfg.PageVisitsGauge.Inc()
 
 	// Strip the prefix /app and serve the requested file
-	filePath := filepath.Join(cfg.FilepathRoot, c.Request().URL.Path[len("/app/"):])
+	filePath := c.Request().URL.Path[len("/app/"):]
 	staticPath := filepath.Join(cfg.StaticDir, filePath)
 	return c.File(staticPath)
 }

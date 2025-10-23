@@ -51,15 +51,7 @@ func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 // Gets email and password from request and hashes the password.
 // Uses the token given to find the user_id of the user to update and makes the update.
 func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
-	token, err := auth.GetBearerToken(c.Request().Header)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Missing or malformed token"})
-	}
-
-	user_id, err := auth.ValidateJWT(token, cfg.Secret)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Invalid bearerToken for user"})
-	}
+	user_id := c.Get("user_id").(uuid.UUID)
 
 	hashedPassword, email, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
@@ -98,7 +90,7 @@ func (cfg *ApiConfig) handlerDeleteUser(c echo.Context) error {
 	}
 
 	if userID != user_id {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": "Unauthorized to remove user"})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to remove user"})
 	}
 
 	err = cfg.DbQueries.RemoveUser(c.Request().Context(), userID)

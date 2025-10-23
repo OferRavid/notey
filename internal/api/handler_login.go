@@ -35,12 +35,12 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	duration := time.Hour
 	user, err := cfg.DbQueries.GetUserByEmail(c.Request().Context(), params.Email)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": fmt.Sprintf("Incorrect email or password: %v", err)})
+		return c.JSON(http.StatusNotFound, echo.Map{"Error": fmt.Sprintf("Incorrect email or password: %v", err)})
 	}
 
 	err = auth.CheckPasswordHash(user.HashedPassword, params.Password)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"Error": fmt.Sprintf("Incorrect password: %v", err)})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": fmt.Sprintf("Incorrect password: %v", err)})
 	}
 
 	token, err := auth.MakeJWT(user.ID, cfg.Secret, duration)
