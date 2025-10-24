@@ -1,0 +1,56 @@
+body {
+    font-family: sans-serif;
+    margin-top: 50px;
+}
+
+header {
+    position: relative;
+    background-color: #2fe7e7;
+    height: 150px;
+}
+
+.header-image-container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.header-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+    color: rgb(255, 60, 157);
+    text-align: center;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 4em;
+    color: #333;
+}
+
+p {
+    color: #666;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

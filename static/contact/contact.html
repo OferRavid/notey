@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notey - Contact</title>
+    <link rel="stylesheet" href="/static/contact/contact.css">
+</head>
+<body>
+    <div class="header-form-wrapper">
+        <header>
+            <div class="header-content">
+                <h1>Notey</h1>
+                <h2>A not so naughty way to manage your notes!</h2>
+                <h3 style="text-align: left;">Contact Form</h3>
+            </div>
+        </header>
+    </div>
+
+    <div class="container">
+        <form class="contact-form">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" name="firstname" placeholder="Your name..">
+
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" placeholder="Your email..">
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Write something.." style="height:200px"></textarea>
+
+            <input type="submit" value="Submit">
+
+        </form>
+    </div>
+    <p><a href="/app/" onclick="history.back(); return false;">Go Back</a></p>
+</body>
+</html>
