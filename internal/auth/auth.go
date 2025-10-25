@@ -5,12 +5,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -92,12 +92,20 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	return id, nil
 }
 
-func GetBearerToken(headers http.Header) (string, error) {
-	return getStringFromHeader(headers, "Bearer")
-}
+func GetBearerToken(c echo.Context) (string, error) {
+	auth := c.Request().Header.Get("Authorization")
 
-func GetAPIKey(headers http.Header) (string, error) {
-	return getStringFromHeader(headers, "ApiKey")
+	if auth == "" {
+		return "", ErrNoAuthHeaderIncluded
+	}
+
+	parts := strings.SplitN(auth, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		return "", errors.New("malformed authorization header")
+	}
+
+	tokenString := parts[1]
+	return tokenString, nil
 }
 
 func MakeRefreshToken() (string, error) {
@@ -105,17 +113,4 @@ func MakeRefreshToken() (string, error) {
 	rand.Read(key)
 	token := hex.EncodeToString(key)
 	return token, nil
-}
-func getStringFromHeader(h http.Header, authType string) (string, error) {
-	headerString := h.Get("Authorization")
-	if headerString == "" {
-		return "", ErrNoAuthHeaderIncluded
-	}
-
-	splitHeaderString := strings.Split(headerString, " ")
-	if len(splitHeaderString) < 2 || splitHeaderString[0] != authType {
-		return "", errors.New("malformed authorization header")
-	}
-
-	return splitHeaderString[1], nil
 }

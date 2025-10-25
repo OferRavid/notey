@@ -33,6 +33,7 @@ type User struct {
 	ID             uuid.UUID
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+	Username       string
 	Email          string
 	HashedPassword string
 }

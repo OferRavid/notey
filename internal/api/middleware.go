@@ -12,10 +12,10 @@ import (
 func (cfg *ApiConfig) Middleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			token, err := auth.GetBearerToken(c.Request().Header)
+			token, err := auth.GetBearerToken(c)
 			if token == "" || err != nil {
 				if errors.As(err, &auth.ErrNoAuthHeaderIncluded) {
-					return c.JSON(http.StatusUnauthorized, echo.Map{"error": "missing Authorization header"})
+					return c.JSON(http.StatusUnauthorized, echo.Map{"error": err.Error()})
 				}
 				return c.JSON(http.StatusUnauthorized, echo.Map{"error": "invalid Authorization header format"})
 			}

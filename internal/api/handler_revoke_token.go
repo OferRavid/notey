@@ -9,7 +9,7 @@ import (
 )
 
 func (cfg *ApiConfig) handlerRevokeToken(c echo.Context) error {
-	refresh_token, err := auth.GetBearerToken(c.Request().Header)
+	refresh_token, err := auth.GetBearerToken(c)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Missing bearer token in headers"})
 	}

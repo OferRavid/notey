@@ -1,9 +1,9 @@
 -- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, email, hashed_password)
+INSERT INTO users (id, created_at, updated_at, username, email, hashed_password)
 VALUES (
-    gen_random_uuid(), NOW(), NOW(), $1, $2
+    gen_random_uuid(), NOW(), NOW(), $1, $2, $3
 )
-RETURNING id, created_at, updated_at, email;
+RETURNING id, created_at, updated_at, username, email;
 
 -- name: DeleteUsers :exec
 DELETE FROM users *;
@@ -16,11 +16,15 @@ WHERE email = $1;
 SELECT * From users
 WHERE id = $1;
 
+-- name: GetUserByUsername :one
+SELECT * From users
+WHERE username = $1;
+
 -- name: UpdateUser :one
 UPDATE users
-SET email = $1, hashed_password = $2, updated_at = NOW()
+SET username = $1, hashed_password = $2, updated_at = NOW()
 WHERE id = $3
-RETURNING id, created_at, updated_at, email;
+RETURNING id, created_at, updated_at, username, email;
 
 -- name: RemoveUser :exec
 DELETE FROM users *

@@ -12,15 +12,14 @@ import (
 )
 
 type parameters struct {
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 // Create new user in database.
-// Gets email and password from request and hashes the password.
-// Creates new user record in database using email and hashedPassword.
 func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
-	hashedPassword, email, statusCode, err := getHashedPasswordAndEmail(c)
+	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
 		return c.JSON(statusCode, echo.Map{"Error": err})
 	}
@@ -28,6 +27,7 @@ func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 	user, err := cfg.DbQueries.CreateUser(
 		c.Request().Context(),
 		database.CreateUserParams{
+			Username:       username,
 			Email:          email,
 			HashedPassword: hashedPassword,
 		},
@@ -42,26 +42,34 @@ func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,
+			Username:  user.Username,
 			Email:     user.Email,
 		},
 	)
 }
 
-// Handles updating user's email address and/or password.
-// Gets email and password from request and hashes the password.
-// Uses the token given to find the user_id of the user to update and makes the update.
+// Handles updating username and/or password.
 func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 	user_id := c.Get("user_id").(uuid.UUID)
 
-	hashedPassword, email, statusCode, err := getHashedPasswordAndEmail(c)
+	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
 		return c.JSON(statusCode, echo.Map{"Error": err})
+	}
+
+	userFromEmail, err := cfg.DbQueries.GetUserByEmail(c.Request().Context(), email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't retrieve user"})
+	}
+
+	if user_id != userFromEmail.ID {
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "Unauthorized to edit user params"})
 	}
 
 	user, err := cfg.DbQueries.UpdateUser(
 		c.Request().Context(),
 		database.UpdateUserParams{
-			Email:          email,
+			Username:       username,
 			HashedPassword: hashedPassword,
 			ID:             user_id,
 		},
@@ -75,6 +83,7 @@ func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 			ID:        user.ID,
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,
+			Username:  user.Username,
 			Email:     user.Email,
 		},
 	)
@@ -84,7 +93,9 @@ func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 func (cfg *ApiConfig) handlerDeleteUser(c echo.Context) error {
 	user_id := c.Get("user_id").(uuid.UUID)
 
-	userID, err := uuid.Parse(c.Request().PathValue("userID"))
+	userIDStr := c.Param("userID")
+
+	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse userID"})
 	}
@@ -102,18 +113,18 @@ func (cfg *ApiConfig) handlerDeleteUser(c echo.Context) error {
 }
 
 // Decodes email and password from request hashes the password then returns the email and hashed password.
-func getHashedPasswordAndEmail(c echo.Context) (string, string, int, error) {
+func getHashedPasswordAndEmail(c echo.Context) (string, string, string, int, error) {
 	decoder := json.NewDecoder(c.Request().Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		return "", "", http.StatusInternalServerError, errors.New("couldn't decode parameters")
+		return "", "", "", http.StatusInternalServerError, errors.New("couldn't decode parameters")
 	}
 
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		return "", "", http.StatusBadRequest, errors.New("couldn't create hashed password")
+		return "", "", "", http.StatusBadRequest, errors.New("couldn't create hashed password")
 	}
 
-	return hashedPassword, params.Email, 0, nil
+	return hashedPassword, params.Email, params.Username, 0, nil
 }

@@ -15,7 +15,7 @@ import (
 // Gets user by email provided in the request then generates jwt token.
 func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	type parameters struct {
-		Email    string `json:"email"`
+		Username string `json:"username"`
 		Password string `json:"password"`
 		// ExpiresInSeconds int64  `json:"expires_in_seconds"`
 	}
@@ -33,9 +33,9 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	}
 
 	duration := time.Hour
-	user, err := cfg.DbQueries.GetUserByEmail(c.Request().Context(), params.Email)
+	user, err := cfg.DbQueries.GetUserByUsername(c.Request().Context(), params.Username)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, echo.Map{"Error": fmt.Sprintf("Incorrect email or password: %v", err)})
+		return c.JSON(http.StatusNotFound, echo.Map{"Error": fmt.Sprintf("Incorrect username: %v", err)})
 	}
 
 	err = auth.CheckPasswordHash(user.HashedPassword, params.Password)

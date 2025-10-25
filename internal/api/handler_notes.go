@@ -161,7 +161,9 @@ func (cfg *ApiConfig) handlerUpdateNote(c echo.Context) error {
 func (cfg *ApiConfig) handlerDeleteNote(c echo.Context) error {
 	user_id := c.Get("user_id").(uuid.UUID)
 
-	noteID, err := uuid.Parse(c.Request().PathValue("noteID"))
+	noteIDStr := c.Param("noteID")
+
+	noteID, err := uuid.Parse(noteIDStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "Failed to parse noteID"})
 	}
