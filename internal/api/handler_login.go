@@ -12,7 +12,6 @@ import (
 )
 
 // Login current user.
-// Gets user by email provided in the request then generates jwt token.
 func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	type parameters struct {
 		Username string `json:"username"`
@@ -21,8 +20,7 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	}
 	type response struct {
 		User
-		Token        string `json:"token"`
-		RefreshToken string `json:"refresh_token"`
+		Token string `json:"token"`
 	}
 
 	decoder := json.NewDecoder(c.Request().Body)
@@ -64,6 +62,18 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": fmt.Sprintf("Failed to create refresh token in database: %v", err)})
 	}
 
+	cookie := &http.Cookie{
+		Name:     RefreshTokenCookieName,
+		Value:    refreshToken.Token,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		HttpOnly: true,
+		// Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	c.SetCookie(cookie)
+
 	return c.JSON(
 		http.StatusOK,
 		response{
@@ -71,10 +81,10 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 				ID:        user.ID,
 				CreatedAt: user.CreatedAt,
 				UpdatedAt: user.CreatedAt,
+				Username:  user.Username,
 				Email:     user.Email,
 			},
-			Token:        token,
-			RefreshToken: refreshToken.Token,
+			Token: token,
 		},
 	)
 }

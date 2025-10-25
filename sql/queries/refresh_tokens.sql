@@ -22,3 +22,7 @@ WHERE token = $1;
 -- name: ClearRevokedTokens :exec
 DELETE FROM refresh_tokens *
 WHERE revoked_at is not null;
+
+-- name: DeleteTokensByUserID :exec
+DELETE FROM refresh_tokens *
+WHERE user_id = $1;

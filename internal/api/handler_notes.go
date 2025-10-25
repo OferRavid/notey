@@ -51,8 +51,6 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 
 // Handles getting all the user's notes.
 func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
-	// author_id := c.QueryParam("author_id")
-	// sortType := c.QueryParam("sort")
 	notes := []Note{}
 	user_id := c.Get("user_id").(uuid.UUID)
 	dbNotes, err := cfg.DbQueries.GetNotesByUserID(c.Request().Context(), user_id)

@@ -55,6 +55,16 @@ func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshToken
 	return i, err
 }
 
+const deleteTokensByUserID = `-- name: DeleteTokensByUserID :exec
+DELETE FROM refresh_tokens *
+WHERE user_id = $1
+`
+
+func (q *Queries) DeleteTokensByUserID(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTokensByUserID, userID)
+	return err
+}
+
 const getRefreshTokenByToken = `-- name: GetRefreshTokenByToken :one
 SELECT token, created_at, updated_at, user_id, expires_at, revoked_at FROM refresh_tokens
 WHERE token = $1
@@ -74,13 +84,13 @@ func (q *Queries) GetRefreshTokenByToken(ctx context.Context, token string) (Ref
 	return i, err
 }
 
-const updateRefreshToken = `-- name: UpdateRefreshToken :exec
+const revokeRefreshToken = `-- name: RevokeRefreshToken :exec
 UPDATE refresh_tokens
 SET updated_at = NOW(), revoked_at = NOW()
 WHERE token = $1
 `
 
-func (q *Queries) UpdateRefreshToken(ctx context.Context, token string) error {
-	_, err := q.db.ExecContext(ctx, updateRefreshToken, token)
+func (q *Queries) RevokeRefreshToken(ctx context.Context, token string) error {
+	_, err := q.db.ExecContext(ctx, revokeRefreshToken, token)
 	return err
 }

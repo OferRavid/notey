@@ -75,6 +75,7 @@ main {
     background-repeat: no-repeat;
     min-height: 100vh;
     padding: 4.5rem;
+    color: rgb(7, 8, 7);
 }
 
 #notes-list ul {
@@ -95,6 +96,25 @@ li {
     margin-right: 25px;
     padding-left: 25px;
     vertical-align: middle;
+}
+
+li::before {
+    content: '';
+    background-image: url('../images/pin.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    width: 40px;
+    height: 45px;
+    position: absolute;
+    
+    top: -15px;
+    left: 50%;
+    
+    opacity: 1;
+    transform: translateX(-50%);
+    z-index: 10;
+    
 }
 
 edit-button {
@@ -198,4 +218,71 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.note-title {
+    padding-top: 15px;
+    padding-left: 5px;
+    font-size: 22px;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.note-body {
+    padding-top: 15px;
+    padding-left: 5px;
+    font-size: 18px;
+    width: 200px;
+    text-wrap: wrap;
+}
+
+.no-notes {
+    padding-top: 60px;
+    padding-left: 20px;
+    font-size: 36px;
+    width: 300px;
+    text-wrap: wrap;
+}
+
+/* Style the editable elements */
+.editable-note .note-title,
+.editable-note .note-body {
+    border: 1px solid transparent;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+/* Add a visual focus indicator */
+.editable-note .note-title:focus,
+.editable-note .note-body:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.button-group {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.save-btn, .cancel-btn {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
 

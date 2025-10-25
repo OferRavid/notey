@@ -99,5 +99,5 @@ func main() {
 	appGroup.GET("/*", cfg.ServeStaticFiles)
 
 	log.Printf("Serving files on port: %s\n", port)
-	e.Logger.Fatal(e.Start(":" + port))
+	e.Logger.Fatal(e.StartAutoTLS(":" + port))
 }

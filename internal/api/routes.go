@@ -11,6 +11,7 @@ func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
 	// Routes to handle users
 	e.POST("/api/users", cfg.handlerCreateUser)
 	e.POST("/api/login", cfg.handlerLogin)
+	e.DELETE("/api/logout", cfg.handlerLogout, cfg.Middleware())
 	e.PUT("/api/users", cfg.handlerUpdateUserData, cfg.Middleware())
 	e.DELETE("/api/users/:userID", cfg.handlerDeleteUser, cfg.Middleware())
 

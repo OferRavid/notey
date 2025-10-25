@@ -34,3 +34,5 @@ type Note struct {
 	Content   string    `json:"content"`
 	UserID    uuid.UUID `json:"user_id"`
 }
+
+const RefreshTokenCookieName = "refresh_token"
