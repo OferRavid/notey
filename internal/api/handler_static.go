@@ -40,6 +40,8 @@ func (cfg *ApiConfig) ServeStaticFiles(c echo.Context) error {
 		filePath = "notes/notes.html"
 	case "note":
 		filePath = "notes/note.html"
+	case "note_edit":
+		filePath = "notes/edit-note.html"
 	}
 	staticPath := filepath.Join(cfg.StaticDir, filePath)
 

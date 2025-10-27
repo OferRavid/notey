@@ -1,6 +1,12 @@
 body {
     position: relative;
     font-family: Arial, sans-serif, Garamond;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/board.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .header-form-wrapper {
@@ -13,7 +19,7 @@ body {
 header {
     position: relative;
     background-color: transparent;
-    height: 150px;
+    height: 250px;
     z-index: 2;
 }
 
@@ -40,72 +46,34 @@ nav button:hover {
     transform: scale(1.1);
 }
 
-.new-note-container {
-    background-color: transparent;
-    padding: 20px 4.5rem;
-    border-bottom: 2px solid #ccc;
-}
-
-
-.new-note {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: rgba(28, 179, 199, 0.781);
-    border-radius: 8px;
-}
-
-#note-form {
-    float: none;
-}
-
-#note-form input,
-#note-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    margin-bottom: 15px;
-}
-
 main {
-    background-image: url('../images/board.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    padding: 4.5rem;
+    height: 1500px;
     color: rgb(7, 8, 7);
 }
 
-#notes-list ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
+.single-note {
     position: relative;
     font-family: Garamond;
     color: rgb(0, 255, 0);
     display: inline-block;
-    width: 250px; /* Adjust as needed */
-    height: 350px; /* Adjust as needed */
+    width: 750px; /* Adjust as needed */
+    height: 1050px; /* Adjust as needed */
     background-image: url('../images/note.jpg');
     background-size: cover;
     background-repeat: no-repeat;
-    margin-right: 25px;
-    padding-left: 25px;
     vertical-align: middle;
+    top: 100px;
+    left: 450px;
 }
 
-li::before {
+.single-note::before {
     content: '';
     background-image: url('../images/pin.png');
     background-size: contain;
     background-repeat: no-repeat;
     
-    width: 40px;
-    height: 45px;
+    width: 120px;
+    height: 135px;
     position: absolute;
     
     top: -15px;
@@ -115,6 +83,24 @@ li::before {
     transform: translateX(-50%);
     z-index: 10;
     
+}
+
+.single-note-title {
+    position: absolute;
+    padding-top: 75px;
+    padding-left: 85px;
+    font-size: 84px;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.single-note-body {
+    position: absolute;
+    padding-top: 208px;
+    padding-left: 85px;
+    font-size: 72px;
+    width: 200px;
+    text-wrap: wrap;
 }
 
 .edit-button {
@@ -222,70 +208,4 @@ a {
 
 a:hover {
     text-decoration: underline;
-}
-
-.note-title {
-    padding-top: 10px;
-    padding-left: 5px;
-    font-size: 28px;
-    text-decoration: underline;
-    font-weight: bold;
-}
-
-.note-body {
-    padding-top: 10px;
-    padding-left: 5px;
-    font-size: 24px;
-    width: 200px;
-    text-wrap: wrap;
-}
-
-.no-notes {
-    padding-top: 60px;
-    padding-left: 20px;
-    font-size: 36px;
-    width: 300px;
-    text-wrap: wrap;
-}
-
-/* Style the editable elements */
-.editable-note .note-title,
-.editable-note .note-body {
-    border: 1px solid transparent;
-    padding: 8px;
-    border-radius: 4px;
-    background-color: transparent;
-}
-
-/* Add a visual focus indicator */
-.editable-note .note-title:focus,
-.editable-note .note-body:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.button-group {
-    margin-top: 10px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.save-btn, .cancel-btn {
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.save-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-}
-
-.cancel-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
 }

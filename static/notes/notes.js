@@ -13,16 +13,21 @@ window.onload = () => {
 
     if (jwtToken) {
         const isNotesPage = window.location.pathname.endsWith('notes');
-        const isEditPage = window.location.pathname.endsWith('note');
+        const isNoteFocusPage = window.location.pathname.endsWith('note');
+        const isEditPage = window.location.pathname.endsWith('edit');
 
         if (isNotesPage) {
             loadNotes();
-        } else if (isEditPage) {
-            noteID = localStorage.getItem("note-id")
+        } else {
+            noteID = localStorage.getItem("note-id");
             if (noteID) {
-                loadNoteForEditing(noteID);
+                if (isEditPage) {
+                    loadNoteForEditing(noteID);
+                } else if (isNoteFocusPage) {
+                    focusNote(noteID);
+                }
             } else {
-                console.log("Missing note's ID. Going back to previous page.")
+                console.log("Missing note's ID. Going back to previous page.");
                 window.location.href = window.history.back();
             }
             
@@ -57,8 +62,55 @@ document.getElementById("note-form").addEventListener("submit", async (event) =>
     loadNotes(); // Reload notes after adding new note
 });
 
+// Click on note to zoom in on it
+document.getElementById("notes-list").addEventListener('click', function(event) {
+    const clickedElement = event.target;
+
+    const isButton = clickedElement.closest('button, a[role="button"]');
+    const noteElement = clickedElement.closest('li');
+
+    if (noteElement && !isButton) {
+        event.preventDefault();
+
+        noteID = noteElement.dataset.noteID;
+        if (noteID) {
+            localStorage.setItem("note-id", noteID)
+            window.location.href = `${appUrl}/note`;
+        }
+    }
+});
+
+async function focusNote(id) {
+    const response = await secureFetch(`${apiUrl}/notes/${id}`, {});
+
+    const note = await response.json();
+
+    const container = document.getElementById('single-note-container');
+    const singleNoteDiv = document.createElement('div');
+    singleNoteDiv.classList.add('single-note');
+
+    const titleDiv = document.createElement('div');
+    titleDiv.classList.add('single-note-title');
+    titleDiv.textContent = note.title;
+
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('single-note-body');
+    contentDiv.textContent = note.content;
+
+    singleNoteDiv.appendChild(titleDiv);
+    singleNoteDiv.appendChild(contentDiv);
+
+    const editButton = getButtonElement("edit-button", "Edit", note.id, editNote);
+    const deleteButton = getButtonElement("delete-button", "Delete", note.id, deleteNote);
+
+    singleNoteDiv.appendChild(editButton);
+    singleNoteDiv.appendChild(deleteButton);
+    container.appendChild(singleNoteDiv);
+
+}
+
 async function loadNoteForEditing(id) {
-    const response = await secureFetch(`${apiUrl}/notes/${noteID}`, {});
+    const response = await secureFetch(`${apiUrl}/notes/${id}`, {});
 
     const note = await response.json();
     renderEditableNote(note);
@@ -101,6 +153,7 @@ async function loadNotes() {
 
 function createNoteElement(note) {
     const li = document.createElement('li');
+    li.dataset.noteID = note.id;
 
     // Create a container for the editable text and note ID
     const noteContentDiv = document.createElement('div');
@@ -125,7 +178,7 @@ function createNoteElement(note) {
 }
 
 function getButtonElement(buttonName, buttonText, noteID, func) {
-    const button = document.createElement(buttonName);
+    const button = document.createElement('button');
     const text = document.createElement(buttonName + "-text");
     button.classList.add(buttonName);
     text.classList.add(buttonName + "-text");
@@ -141,7 +194,7 @@ function getButtonElement(buttonName, buttonText, noteID, func) {
 }
 
 function renderEditableNote(note) {
-    const container = document.getElementById('single-note-container');
+    const container = document.getElementById('edit-note-container');
     const li = createNoteElement(note);
 
     // Get the title and body elements within the new list item
@@ -210,19 +263,17 @@ async function logout() {
 }
 
 async function deleteNote(noteID) {
-    console.log(`deleting note with id: ${noteID}`);
     jwtToken = localStorage.getItem("jwtToken")
     const response = await secureFetch(`${apiUrl}/notes/${noteID}`, {
         method: "DELETE"
     });
 
-    loadNotes();
+    window.location.href = `${appUrl}/notes`;
 }
 
 function editNote(noteID) {
-    console.log(`editing note with id: ${noteID}`);
     localStorage.setItem("note-id", noteID)
-    window.location.href = `${appUrl}/note`;
+    window.location.href = `${appUrl}/note_edit`;
 }
 
 async function attemptRefresh() {

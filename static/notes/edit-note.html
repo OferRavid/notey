@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Note</title>
-    <link rel="stylesheet" href="/static/notes/note.css">
+    <title>Edit Note</title>
+    <link rel="stylesheet" href="/static/notes/notes.css">
 </head>
 <body>
     <div class="header-form-wrapper">
@@ -20,14 +20,14 @@
     </div>
 
     <main>
-        <h1>Your Note</h1>
+        <h1>Edit Note</h1>
 
-        <div id="single-note-container">
+        <div id="edit-note-container">
             <!-- The single note will be rendered here by JavaScript -->
         </div>
         <div>
             <p>
-                <a href="/app/notes">Go Back</a>
+                <a href="/app/" onclick="history.back(); return false;">Go Back</a>
             </p>
         </div>
     </main>
