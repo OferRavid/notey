@@ -1,0 +1,103 @@
+body {
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+
+.header-form-wrapper {
+    background-image: url('/static/images/header.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+header {
+    position: relative;
+    background-color: transparent;
+    height: 150px;
+    z-index: 2;
+}
+
+.header-content {
+    position: relative;
+    z-index: 3;
+    color: rgb(179, 49, 240);
+    -webkit-text-stroke-width: .85px;
+    -webkit-text-stroke-color: green;
+    text-align: center;
+}
+
+.hidden {
+    display: none; /* Ensure sections are hidden */
+}
+
+main {
+    background-image: url('/static/images/board.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding: 4.5rem;
+}
+
+* {box-sizing: border-box;}
+
+/* Style the input container */
+.input-container {
+  display: flex;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* Style the form icons */
+.icon {
+  padding: 10px;
+  background-color: dodgerblue;
+  color: rgb(0, 0, 0);
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Style the input fields */
+.input-field {
+  width: 100%;
+  padding: 10px;
+  outline: none;
+}
+
+.input-field:focus {
+  border: 2px solid dodgerblue;
+}
+
+/* Set a style for the submit button */
+.btn {
+  background-color: dodgerblue;
+  color: white;
+  padding: 15px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+.btn:hover {
+  opacity: 1;
+}
+
+.signup-button {
+    background-color: red;
+    color: white;
+    padding: 7px 10px;
+    border: none;
+    cursor: pointer;
+    display: inline;
+    opacity: 0.8;
+}
+
+.signup-button:hover {
+  opacity: 1;
+}
+
+.trademark {
+  font-size: 0.35em;
+  font-weight: bolder;
+}

@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: go-postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: app_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    secrets:
+      - db_user
+      - db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $(cat /run/secrets/db_user) -d app_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+    container_name: go-migrator
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./sql/schema:/app/sql/schema
+    secrets:
+      - db_user
+      - db_password
+    command:
+      - /bin/sh
+      - -c
+      - |
+        export GOOSE_DRIVER="postgres"
+        export GOOSE_DBSTRING="user=$(cat /run/secrets/db_user) password=$(cat /run/secrets/db_password) host=db port=5432 dbname=app_db"
+        goose -dir /app/sql/schema down
+        goose -dir /app/sql/schema up
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notey
+    restart: always
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    secrets:
+      - db_user
+      - db_password
+      - jwt_key
+    environment:
+      PLATFORM: "dev"
+      APP_PORT: 8080
+
+# Define the secrets at the top level
+secrets:
+  db_user:
+    file: ./secrets/db_user.txt
+  db_password:
+    file: ./secrets/db_password.txt
+  jwt_key:
+    file: ./secrets/jwt_key.txt
+
+volumes:
+  postgres_data:

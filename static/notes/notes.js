@@ -258,7 +258,8 @@ async function logout() {
         method: "DELETE"
     })
 
-    localStorage.clear()
+    localStorage.clear();
+    document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.href = `${appUrl}/`;
 }
 

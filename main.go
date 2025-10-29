@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"sync/atomic"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/OferRavid/notey/internal/api"
 	"github.com/OferRavid/notey/internal/database"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus"
@@ -18,9 +18,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// The path where Docker secrets are mounted
+const secretsDir = "/run/secrets"
+
 func main() {
 	const staticDir = "static"
-	const port = "8080"
+	appPort := os.Getenv("APP_PORT")
+	if appPort == "" {
+		appPort = "8080" // Provide a default if not set
+	}
 
 	var pageVisitsGauge = prometheus.NewGauge(
 		prometheus.GaugeOpts{
@@ -29,20 +35,28 @@ func main() {
 		},
 	)
 
-	// Use environment variables to set up server's environment and saving them in a struct
-	godotenv.Load()
-	dbURL := os.Getenv("DB_URL")
-	if dbURL == "" {
-		log.Fatal("DB_URL must be set")
+	databaseUser, err := readSecretFile("db_user")
+	if err != nil {
+		log.Fatalf("Failed to read database user secret: %v", err)
 	}
+
+	databasePassword, err := readSecretFile("db_password")
+	if err != nil {
+		log.Fatalf("Failed to read database password secret: %v", err)
+	}
+
+	jwtSecret, err := readSecretFile("jwt_key")
+	if err != nil {
+		log.Fatalf("Failed to read JWT secret: %v", err)
+	}
+
+	dbURL := fmt.Sprintf(
+		"postgres://%s:%s@db:5432/app_db?sslmode=disable",
+		databaseUser,
+		databasePassword,
+	)
+
 	platform := os.Getenv("PLATFORM")
-	if platform == "" {
-		log.Fatal("PLATFORM must be set")
-	}
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET environment variable is not set")
-	}
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("failed to open db: %s\n", err)
@@ -98,11 +112,23 @@ func main() {
 	// Use the custom handler to serve static files
 	appGroup.GET("/*", cfg.ServeStaticFiles)
 
-	log.Printf("Serving files on port: %s\n", port)
+	log.Printf("Serving files on port: %s\n", appPort)
 	if cfg.Platform == "dev" {
-		e.Logger.Fatal(e.Start(":" + port))
+		log.Println("starting non-secure http page")
+		e.Logger.Fatal(e.Start(":" + appPort))
 	} else {
-		e.Logger.Fatal(e.StartAutoTLS(":" + port))
+		e.Logger.Fatal(e.StartAutoTLS(":" + appPort))
 	}
 
+}
+
+// readSecretFile reads a secret from its mounted file path.
+func readSecretFile(secretName string) (string, error) {
+	filePath := fmt.Sprintf("%s/%s", secretsDir, secretName)
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	// Trim any trailing newline characters
+	return string(content), nil
 }

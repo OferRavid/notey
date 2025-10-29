@@ -80,26 +80,26 @@ main {
     left: 50%;
     
     opacity: 1;
-    transform: translateX(-50%);
     z-index: 10;
     
 }
 
 .single-note-title {
     position: absolute;
-    padding-top: 75px;
+    padding-top: 125px;
     padding-left: 85px;
     font-size: 84px;
+    width: 100%;
     text-decoration: underline;
     font-weight: bold;
 }
 
 .single-note-body {
     position: absolute;
-    padding-top: 208px;
+    padding-top: 258px;
     padding-left: 85px;
     font-size: 72px;
-    width: 200px;
+    width: 80%;
     text-wrap: wrap;
 }
 

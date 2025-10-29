@@ -54,3 +54,8 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.trademark {
+  font-size: 0.35em;
+  font-weight: bolder;
+}

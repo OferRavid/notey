@@ -17,7 +17,7 @@ func (cfg *ApiConfig) RegisterRoutes(e *echo.Echo) {
 
 	// Routes to hanlde refresh token
 	e.POST("/api/refresh", cfg.handlerRefreshToken)
-	e.POST("/api/revoke", cfg.handlerRevokeToken)
+	e.PUT("/api/revoke", cfg.handlerRevokeToken)
 
 	// Routes to handle notes
 	e.GET("/api/notes", cfg.handlerRetrieveNotes, cfg.Middleware())

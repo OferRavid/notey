@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notey - Notes App</title>
+    <title>Notey&trade; - Notes App</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://kit.fontawesome.com/0a95e362bf.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <h1>Notey</h1>
-        <h2>A not so naughty way to manage your notes!</h2>
-    </header>
-
+    <div class="header-form-wrapper">
+        <header>
+            <div class="header-content">
+                <h1>Notey<sup class="trademark">TM</sup></h1>
+                <h2>A not so naughty way to manage your notes!</h2>
+            </div>
+            <nav>
+                <button id="login-button">Login</button>
+            </nav>
+        </header>
+    </div>
     <main>
-        <section id="authSection">
-            <div id="registrationSection">
-                <h2>If Not Registered Yet</h2>
-                <form id="registrationForm">
-                    <input type="email" id="regEmail" placeholder="Email" required>
-                    <input type="password" id="regPassword" placeholder="Password" required>
-                    <button type="submit" id="regSubmitBtn">Register</button>
-                </form>
+        <div class="intro-container">
+            <div class="intro-content">
+                <h1><u>Welcome to Notey<sup class="trademark">TM</sup>: Your Ultimate Note-Taking Solution</u></h1>
+                <p style="line-height: 1.5;">
+                    Discover Notey<sup class="trademark">TM</sup>, the all-in-one app designed to revolutionize how you manage your notes!<br>
+                    Whether you're a student keeping track of assignments, a professional organizing meeting notes,<br>
+                    or simply someone who values clarity in their thoughts, Notey<sup class="trademark">TM</sup> is here to simplify your life.<br>
+                    With its sleek and intuitive interface, you can effortlessly create, read, update, and delete notes,<br>
+                    allowing you to focus on what truly matters.
+                </p>
+                <p style="line-height: 1.5;">
+                    But that's not all—Notey<sup class="trademark">TM</sup> offers powerful features tailored for a seamless user experience.<br>
+                    <!-- Organize your notes into categories, set reminders to stay on top of your tasks, and collaborate with others in real time. 
+                    Plus, with our robust end-to-end encryption, your thoughts are kept secure, ensuring that only you can access your private information.  -->
+                    Join the Notey<sup class="trademark">TM</sup> community today and transform your note-taking experience.<br>
+                    <h2>Start your journey toward better organization and productivity now!</h2>
+                </p>
             </div>
-
-            <div id="formSection">
-                <h2>Login</h2>
-                <form id="userForm">
-                    <input type="email" id="email" placeholder="Email" required>
-                    <input type="password" id="password" placeholder="Password" required>
-                    <button type="submit" id="submitBtn">Login</button>
-                </form>
-            </div>
-        </section>
-        
+            
+        </div>
     </main>
 
     <script src="/static/script.js"></script>

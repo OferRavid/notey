@@ -289,3 +289,8 @@ a:hover {
     color: white;
     border: none;
 }
+
+.trademark {
+  font-size: 0.35em;
+  font-weight: bolder;
+}

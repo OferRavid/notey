@@ -1,21 +1,71 @@
 body {
-    position: relative;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: rgb(68, 31, 1);
+  position: relative;
+  font-family: Arial, sans-serif, Garamond;
+}
+
+.header-form-wrapper {
+  background-image: url('/static/images/header.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 header {
-    background-color: #2fe7e7;
-    background-image: url('images/header.png');
-    color: black;
-    padding: 1rem;
-    text-align: left;
-    height: 400;
+  position: relative;
+  background-color: transparent;
+  height: 150px;
+  z-index: 2;
+}
+
+.header-content {
+  position: relative;
+  z-index: 3;
+  color: rgb(179, 49, 240);
+  -webkit-text-stroke-width: .85px;
+  -webkit-text-stroke-color: green;
+  text-align: center;
 }
 
 main {
-    padding: 20px;
+  background-image: url('/static/images/board.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding: 4.5rem;
+  color: rgb(212, 0, 255);
+  font-weight: bold;
 }
 
+.login-button {
+  background-color: red;
+  color: white;
+  padding: 7px 10px;
+  border: none;
+  cursor: pointer;
+  display: inline;
+  opacity: 0.8;
+}
+
+.login-button:hover {
+  opacity: 1;
+}
+
+.intro-container {
+  background-image: url("images/note.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 75%;
+  margin-left: 200px;
+}
+
+.intro-content {
+  font-family: Garamond;
+  font-size: 26px;
+  padding: 35px 100px;
+}
+
+.trademark {
+  font-size: 0.35em;
+  font-weight: bolder;
+}

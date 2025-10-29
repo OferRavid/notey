@@ -1,0 +1,20 @@
+# Stage 1: Build the goose binary
+FROM golang:1.23-alpine AS migrator_builder
+
+WORKDIR /src
+
+# Create a temporary go.mod file to manage goose's dependencies
+RUN go mod init migrator-tools
+RUN go get github.com/pressly/goose/v3/cmd/goose@latest
+
+# Build goose
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
+# Stage 2: Create a minimal final image with only the goose binary
+FROM alpine:latest
+
+# Copy the goose binary from the builder stage
+COPY --from=migrator_builder /go/bin/goose /usr/local/bin/goose
+
+# Install postgresql-client for direct debugging, if needed
+RUN apk add --no-cache postgresql-client
