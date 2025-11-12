@@ -1,10 +1,13 @@
 package auth
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
 func TestCheckPasswordHash(t *testing.T) {
@@ -110,47 +113,54 @@ func TestValidateJWT(t *testing.T) {
 	}
 }
 
-// func TestGetBearerToken(t *testing.T) {
-// 	tests := []struct {
-// 		name      string
-// 		headers   http.Header
-// 		wantToken string
-// 		wantErr   bool
-// 	}{
-// 		{
-// 			name: "Valid Bearer token",
-// 			headers: http.Header{
-// 				"Authorization": []string{"Bearer valid_token"},
-// 			},
-// 			wantToken: "valid_token",
-// 			wantErr:   false,
-// 		},
-// 		{
-// 			name:      "Missing Authorization header",
-// 			headers:   http.Header{},
-// 			wantToken: "",
-// 			wantErr:   true,
-// 		},
-// 		{
-// 			name: "Malformed Authorization header",
-// 			headers: http.Header{
-// 				"Authorization": []string{"InvalidBearer token"},
-// 			},
-// 			wantToken: "",
-// 			wantErr:   true,
-// 		},
-// 	}
+func TestGetBearerToken(t *testing.T) {
+	tests := []struct {
+		name      string
+		context   echo.Context
+		wantToken string
+		wantErr   bool
+	}{
+		{
+			name:      "Valid Bearer token",
+			context:   getContext("Bearer valid_token"),
+			wantToken: "valid_token",
+			wantErr:   false,
+		},
+		{
+			name:      "Missing Authorization header",
+			context:   getContext(""),
+			wantToken: "",
+			wantErr:   true,
+		},
+		{
+			name:      "Malformed Authorization header",
+			context:   getContext("InvalidBearer token"),
+			wantToken: "",
+			wantErr:   true,
+		},
+	}
 
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			gotToken, err := GetBearerToken(tt.headers)
-// 			if (err != nil) != tt.wantErr {
-// 				t.Errorf("GetBearerToken() error = %v, wantErr %v", err, tt.wantErr)
-// 				return
-// 			}
-// 			if gotToken != tt.wantToken {
-// 				t.Errorf("GetBearerToken() gotToken = %v, want %v", gotToken, tt.wantToken)
-// 			}
-// 		})
-// 	}
-// }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotToken, err := GetBearerToken(tt.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetBearerToken() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotToken != tt.wantToken {
+				t.Errorf("GetBearerToken() gotToken = %v, want %v", gotToken, tt.wantToken)
+			}
+		})
+	}
+}
+
+func getContext(authHeader string) echo.Context {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	rec := httptest.NewRecorder()
+	if authHeader != "" {
+		req.Header.Set("Authorization", authHeader)
+	}
+
+	return e.NewContext(req, rec)
+}
