@@ -76,9 +76,16 @@ func TestHandlerLogin(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rec.Code)
 
+		// type userResponse struct {
+		// 	ID        uuid.UUID    `json:"id"`
+		// 	CreatedAt time.Time `json:"created_at"`
+		// 	UpdatedAt time.Time `json:"updated_at"`
+		// 	Username  string    `json:"username"`
+		// 	Email     string    `json:"email"`
+		// }
 		var response struct {
-			User  database.User `json:"user"`
-			Token string        `json:"token"`
+			User  User   `json:"user"`
+			Token string `json:"token"`
 		}
 		fmt.Println("Body contains: ")
 		fmt.Println(rec.Body.String())
