@@ -80,7 +80,11 @@ func TestHandlerLogin(t *testing.T) {
 			User  database.User `json:"user"`
 			Token string        `json:"token"`
 		}
+		fmt.Println("Body contains: ")
+		fmt.Println(rec.Body.String())
 		json.Unmarshal(rec.Body.Bytes(), &response)
+		fmt.Println("response returned username: ")
+		fmt.Println(response.User.Username)
 		assert.Equal(t, "testuser", response.User.Username)
 		assert.NotEmpty(t, response.Token) // Check that a token was returned
 	})
