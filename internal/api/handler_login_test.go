@@ -11,9 +11,11 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
@@ -76,23 +78,20 @@ func TestHandlerLogin(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		// type userResponse struct {
-		// 	ID        uuid.UUID    `json:"id"`
-		// 	CreatedAt time.Time `json:"created_at"`
-		// 	UpdatedAt time.Time `json:"updated_at"`
-		// 	Username  string    `json:"username"`
-		// 	Email     string    `json:"email"`
-		// }
 		var response struct {
-			User  User   `json:"user"`
-			Token string `json:"token"`
+			ID        uuid.UUID `json:"id"`
+			CreatedAt time.Time `json:"created_at"`
+			UpdatedAt time.Time `json:"updated_at"`
+			Username  string    `json:"username"`
+			Email     string    `json:"email"`
+			Token     string    `json:"token"`
 		}
 		fmt.Println("Body contains: ")
 		fmt.Println(rec.Body.String())
 		json.Unmarshal(rec.Body.Bytes(), &response)
 		fmt.Println("response returned username: ")
-		fmt.Println(response.User.Username)
-		assert.Equal(t, "testuser", response.User.Username)
+		fmt.Println(response.Username)
+		assert.Equal(t, "testuser", response.Username)
 		assert.NotEmpty(t, response.Token) // Check that a token was returned
 	})
 
