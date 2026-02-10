@@ -32,7 +32,8 @@ jobs:
         run: go mod tidy
       - name: Run Migrations
         run: |
-          go run ./vendor/github.com/pressly/goose/v3/cmd/goose.go -dir ./sql/schema postgres "user:password@localhost:5432/test_db?sslmode=disable" up
+          # Run goose using go run directly, assuming goose is in your go.mod
+          go run github.com/pressly/goose/v3/cmd/goose -dir ./sql/schema postgres "user:password@localhost:5432/test_db?sslmode=disable" up
       - name: Run Tests
         run: go test -v ./...
         env:
