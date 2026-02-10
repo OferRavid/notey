@@ -15,7 +15,7 @@ import (
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/labstack/echo/v4"
-	_ "github.com/mattn/go-sqlite3" // SQLite driver
+	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 )
 
