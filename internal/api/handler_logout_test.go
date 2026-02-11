@@ -87,9 +87,9 @@ func TestHandlerLogout(t *testing.T) {
 		jwtToken := loginResponse.Token
 		userID := loginResponse.ID
 
-		refreshToken, err := cfg.DbQueries.GetRefreshTokenByToken(c.Request().Context(), jwtToken)
+		count, err := cfg.DbQueries.CheckRecordExists(c.Request().Context(), userID)
 		assert.NoError(t, err)
-		assert.Equal(t, userID, refreshToken.UserID)
+		assert.Greater(t, count, int64(0))
 
 		req = httptest.NewRequest(http.MethodDelete, "/api/logout", &bytes.Buffer{})
 		req.Header.Set("Authorization", "Bearer "+jwtToken)
@@ -104,7 +104,8 @@ func TestHandlerLogout(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusNoContent, rec.Code)
-		count, err := cfg.DbQueries.CheckRecordExists(c.Request().Context(), jwtToken)
-		assert.Equal(t, 0, count)
+		count, err = cfg.DbQueries.CheckRecordExists(c.Request().Context(), userID)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), count)
 	})
 }

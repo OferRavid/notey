@@ -30,7 +30,7 @@ WHERE user_id = $1;
 -- name: CheckRecordExists :one
 SELECT COUNT(*) as count
 FROM refresh_tokens
-WHERE token = $1;
+WHERE user_id = $1;
 
 -- name: RevokeRefreshToken :exec
 UPDATE refresh_tokens
