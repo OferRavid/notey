@@ -34,10 +34,10 @@ echo "$(openssl rand -base64 64)" > secrets/jwt_key.txt
 #### 🔨 Building the app
 ```bash
 # Build and Run with Docker Compose:
-docker-compose up --build
+docker compose up --build
 ```
 
-This will serve the app at ```localhost:8080/app```
+This will serve the app at ```localhost:8080/app/```
 
 ## 📖 Usage
 
