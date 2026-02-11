@@ -15,11 +15,11 @@ import (
 const checkRecordExists = `-- name: CheckRecordExists :one
 SELECT COUNT(*) as count
 FROM refresh_tokens
-WHERE token = $1
+WHERE user_id = $1
 `
 
-func (q *Queries) CheckRecordExists(ctx context.Context, token string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, checkRecordExists, token)
+func (q *Queries) CheckRecordExists(ctx context.Context, userID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, checkRecordExists, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
