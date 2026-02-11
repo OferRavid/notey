@@ -26,3 +26,13 @@ WHERE revoked_at is not null;
 -- name: DeleteTokensByUserID :exec
 DELETE FROM refresh_tokens *
 WHERE user_id = $1;
+
+-- name: CheckRecordExists :one
+SELECT COUNT(*) as count
+FROM refresh_tokens
+WHERE token = $1;
+
+-- name: RevokeRefreshToken :exec
+UPDATE refresh_tokens
+SET updated_at = NOW(), revoked_at = NOW()
+WHERE token = $1;
