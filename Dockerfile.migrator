@@ -18,5 +18,3 @@ COPY --from=migrator_builder /go/bin/goose /usr/local/bin/goose
 
 # Install postgresql-client for direct debugging, if needed
 RUN apk add --no-cache postgresql-client
-
-ENTRYPOINT ["goose"]
