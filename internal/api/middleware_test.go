@@ -76,9 +76,9 @@ func TestMiddleware(t *testing.T) {
 				assert.Equal(t, tt.expectedStatus, rec.Code)
 				assert.Equal(t, tt.expectedResponse, rec.Body)
 
-				if tt.name == "Valid Token" {
-					assert.Equal(t, userID, c.Get("user_id").(uuid.UUID))
-				}
+			}
+			if tt.name == "Valid Token" {
+				assert.Equal(t, userID, c.Get("user_id").(uuid.UUID))
 			}
 
 		})
