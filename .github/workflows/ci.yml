@@ -33,11 +33,11 @@ jobs:
           docker build -f Dockerfile.goose -t goose-image .
       - name: Run Migrations
         run: |
-          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@localhost:5432/test_db?sslmode=disable" up
+          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@postgres:5432/test_db?sslmode=disable" up
       - name: Run Tests
         run: go test -v ./...
         env:
-          DB_URL: postgres://user:password@localhost:5432/test_db?sslmode=disable
+          DB_URL: postgres://user:password@postgres:5432/test_db?sslmode=disable
       - name: Reset datatbase
         run: |
-          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@localhost:5432/test_db?sslmode=disable" down
+          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@postgres:5432/test_db?sslmode=disable" down
