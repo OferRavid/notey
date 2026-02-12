@@ -33,7 +33,7 @@ jobs:
           docker build -f Dockerfile.migrator -t goose-image .
       - name: Run Migrations
         run: |
-          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@localhost:5432/test_db?sslmode=disable" up
+          docker run --rm goose-image up -dir ./sql/schema postgres "postgres://user:password@localhost:5432/test_db?sslmode=disable"
       - name: Run Tests
         run: go test -v ./...
         env:
