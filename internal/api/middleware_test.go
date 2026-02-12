@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -78,6 +79,7 @@ func TestMiddleware(t *testing.T) {
 
 			}
 			if tt.name == "Valid Token" {
+				fmt.Println("Check middleware worked as expected...")
 				assert.Equal(t, userID, c.Get("user_id").(uuid.UUID))
 			}
 
