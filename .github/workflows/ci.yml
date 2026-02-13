@@ -28,32 +28,12 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.25'
-      - name: Build Docker Image for Goose
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile.goose
-          push: false
-          tags: goose-image
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          for i in {1..30}; do
-            if pg_isready -h postgres -U user; then
-              echo "PostgreSQL is ready!"
-              break
-            fi
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 2
-          done
+      - name: Install Goose
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
       - name: Run Migrations
         run: |
-          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@postgres:5432/test_db?sslmode=disable" up
+          goose -dir ./sql/schema postgres "postgres://user:password@localhost:5432/test_db?sslmode=disable" up
       - name: Run Tests
         run: go test -v ./...
         env:
-          DB_URL: postgres://user:password@postgres:5432/test_db?sslmode=disable
-      - name: Reset datatbase
-        run: |
-          docker run --rm goose-image -dir ./sql/schema postgres "postgres://user:password@postgres:5432/test_db?sslmode=disable" down
+          DB_URL: postgres://user:password@localhost:5432/test_db?sslmode=disable
