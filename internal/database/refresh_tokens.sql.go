@@ -12,6 +12,19 @@ import (
 	"github.com/google/uuid"
 )
 
+const checkRecordExists = `-- name: CheckRecordExists :one
+SELECT COUNT(*) as count
+FROM refresh_tokens
+WHERE user_id = $1
+`
+
+func (q *Queries) CheckRecordExists(ctx context.Context, userID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, checkRecordExists, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const clearRevokedTokens = `-- name: ClearRevokedTokens :exec
 DELETE FROM refresh_tokens *
 WHERE revoked_at is not null
@@ -92,5 +105,16 @@ WHERE token = $1
 
 func (q *Queries) RevokeRefreshToken(ctx context.Context, token string) error {
 	_, err := q.db.ExecContext(ctx, revokeRefreshToken, token)
+	return err
+}
+
+const updateRefreshToken = `-- name: UpdateRefreshToken :exec
+UPDATE refresh_tokens
+SET updated_at = NOW(), revoked_at = NOW()
+WHERE token = $1
+`
+
+func (q *Queries) UpdateRefreshToken(ctx context.Context, token string) error {
+	_, err := q.db.ExecContext(ctx, updateRefreshToken, token)
 	return err
 }
