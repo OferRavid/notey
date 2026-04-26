@@ -30,7 +30,6 @@ func TestHandlerLogout(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to setup test DB: %v", err)
 	}
-	defer db.Close()
 
 	if err = db.Ping(); err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
@@ -43,14 +42,16 @@ func TestHandlerLogout(t *testing.T) {
 		Secret:    "secret",
 	}
 
+	// Define cleanup function
+	t.Cleanup(func() {
+		cfg.DbQueries.DeleteUsers(context.Background())
+		db.Close()
+	})
+
 	// Insert test user into the database
 	hashedPassword, err := auth.HashPassword("password")
 	if err != nil {
 		t.Fatalf("failed to hash password: %v", err)
-	}
-
-	if err := cfg.DbQueries.DeleteUsers(context.Background()); err != nil {
-		t.Fatalf("failed to delete users: %s", err)
 	}
 
 	_, err = cfg.DbQueries.CreateUser(context.Background(), database.CreateUserParams{

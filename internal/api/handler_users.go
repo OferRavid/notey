@@ -3,12 +3,14 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type parameters struct {
@@ -123,7 +125,10 @@ func getHashedPasswordAndEmail(c echo.Context) (string, string, string, int, err
 
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		return "", "", "", http.StatusBadRequest, errors.New("couldn't create hashed password")
+		if err == bcrypt.ErrPasswordTooLong {
+			return "", "", "", http.StatusBadRequest, errors.New("password is too long. try again")
+		}
+		return "", "", "", http.StatusBadRequest, fmt.Errorf("couldn't create hashed password: %v", err)
 	}
 
 	return hashedPassword, params.Email, params.Username, 0, nil

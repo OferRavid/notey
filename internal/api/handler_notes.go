@@ -24,7 +24,6 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 	err := decoder.Decode(&params)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't decode parameters"})
-
 	}
 
 	user_id := c.Get("user_id").(uuid.UUID)
@@ -35,7 +34,7 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 		UserID:  user_id,
 	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't create note"})
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't save note to database"})
 
 	}
 
@@ -58,7 +57,7 @@ func (cfg *ApiConfig) handlerRetrieveNotes(c echo.Context) error {
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusNoContent, notes)
 		}
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't retrieve notes"})
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't retrieve notes from database"})
 	}
 
 	for _, dbNote := range dbNotes {
