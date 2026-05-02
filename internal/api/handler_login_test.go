@@ -129,6 +129,4 @@ func TestHandlerLogin(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusForbidden, rec.Code)
 	})
-
-	// Additional test cases can be added for other scenarios (e.g., JWT creation failure, etc.)
 }

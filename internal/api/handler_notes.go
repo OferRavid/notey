@@ -25,6 +25,9 @@ func (cfg *ApiConfig) handlerCreateNote(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Couldn't decode parameters"})
 	}
+	if params.Title == "" || params.Content == "" {
+		return c.JSON(http.StatusBadRequest, echo.Map{"Error": "A note must have a title and content on creation"})
+	}
 
 	user_id := c.Get("user_id").(uuid.UUID)
 

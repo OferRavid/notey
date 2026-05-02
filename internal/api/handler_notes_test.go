@@ -91,10 +91,16 @@ func TestHandlerCreateNote(t *testing.T) {
 		expectedStatus int
 	}{
 		{
-			name:           "User created successfully",
+			name:           "Note created successfully",
 			title:          "Test note creation title",
 			content:        "Test note creation content",
 			expectedStatus: http.StatusCreated,
+		},
+		{
+			name:           "Empty title and content",
+			title:          "",
+			content:        "",
+			expectedStatus: http.StatusBadRequest,
 		},
 	}
 
@@ -113,12 +119,15 @@ func TestHandlerCreateNote(t *testing.T) {
 
 			err = cfg.handlerCreateNote(c)
 			assert.NoError(t, err)
-			assert.Equal(t, http.StatusCreated, rec.Code)
-			var response Note
-			json.Unmarshal(rec.Body.Bytes(), &response)
-			assert.Equal(t, tt.title, response.Title)
-			assert.Equal(t, tt.content, response.Content)
-			assert.Equal(t, userID, response.UserID)
+			assert.Equal(t, tt.expectedStatus, rec.Code)
+			if tt.expectedStatus == http.StatusCreated {
+				var response Note
+				json.Unmarshal(rec.Body.Bytes(), &response)
+				assert.Equal(t, tt.title, response.Title)
+				assert.Equal(t, tt.content, response.Content)
+				assert.Equal(t, userID, response.UserID)
+			}
+
 		})
 	}
 
