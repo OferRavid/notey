@@ -33,12 +33,12 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 	duration := time.Hour
 	user, err := cfg.DbQueries.GetUserByUsername(c.Request().Context(), params.Username)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, echo.Map{"Error": fmt.Sprintf("Incorrect username: %v", err)})
+		return c.JSON(http.StatusNotFound, echo.Map{"Error": "unauthorized"})
 	}
 
 	err = auth.CheckPasswordHash(user.HashedPassword, params.Password)
 	if err != nil {
-		return c.JSON(http.StatusForbidden, echo.Map{"Error": fmt.Sprintf("Incorrect password: %v", err)})
+		return c.JSON(http.StatusForbidden, echo.Map{"Error": "unauthorized"})
 	}
 
 	token, err := auth.MakeJWT(user.ID, cfg.Secret, duration)
@@ -59,7 +59,7 @@ func (cfg *ApiConfig) handlerLogin(c echo.Context) error {
 		},
 	)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": fmt.Sprintf("Failed to create refresh token in database: %v", err)})
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "unauthorized"})
 	}
 
 	cookie := &http.Cookie{

@@ -16,7 +16,7 @@ func (cfg *ApiConfig) handlerReset(c echo.Context) error {
 	cfg.PageVisitsGauge.Set(0)
 	if err := cfg.DbQueries.DeleteUsers(c.Request().Context()); err != nil {
 		log.Printf("failed to delete users: %s", err)
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": err})
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "unauthorized"})
 	}
 
 	return c.JSON(http.StatusOK, "Hits reset to 0")

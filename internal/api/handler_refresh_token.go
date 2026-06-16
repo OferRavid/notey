@@ -2,7 +2,6 @@ package api
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,7 +20,7 @@ func (cfg *ApiConfig) handlerRefreshToken(c echo.Context) error {
 	refreshToken, err := cfg.DbQueries.GetRefreshTokenByToken(c.Request().Context(), refresh_token)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return c.JSON(http.StatusNotFound, echo.Map{"Error": "Refresh token doesn't exist"})
+			return c.JSON(http.StatusNotFound, echo.Map{"Error": "unauthorized"})
 		}
 		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "Bad response from database"})
 	}
@@ -63,7 +62,7 @@ func (cfg *ApiConfig) handlerRefreshToken(c echo.Context) error {
 		},
 	)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": fmt.Sprintf("Failed to create refresh token in database: %v", err)})
+		return c.JSON(http.StatusInternalServerError, echo.Map{"Error": "unauthorized"})
 	}
 
 	newCookie := &http.Cookie{

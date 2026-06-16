@@ -3,12 +3,14 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/OferRavid/notey/internal/auth"
 	"github.com/OferRavid/notey/internal/database"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type parameters struct {
@@ -21,7 +23,7 @@ type parameters struct {
 func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
-		return c.JSON(statusCode, echo.Map{"Error": err})
+		return c.JSON(statusCode, echo.Map{"Error": "unauthorized"})
 	}
 
 	user, err := cfg.DbQueries.CreateUser(
@@ -54,7 +56,7 @@ func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 
 	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
-		return c.JSON(statusCode, echo.Map{"Error": err})
+		return c.JSON(statusCode, echo.Map{"Error": "unauthorized"})
 	}
 
 	userFromEmail, err := cfg.DbQueries.GetUserByEmail(c.Request().Context(), email)
@@ -123,7 +125,10 @@ func getHashedPasswordAndEmail(c echo.Context) (string, string, string, int, err
 
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		return "", "", "", http.StatusBadRequest, errors.New("couldn't create hashed password")
+		if err == bcrypt.ErrPasswordTooLong {
+			return "", "", "", http.StatusBadRequest, errors.New("password is too long. try again")
+		}
+		return "", "", "", http.StatusBadRequest, fmt.Errorf("couldn't create hashed password: %v", err)
 	}
 
 	return hashedPassword, params.Email, params.Username, 0, nil
