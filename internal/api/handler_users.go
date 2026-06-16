@@ -23,7 +23,7 @@ type parameters struct {
 func (cfg *ApiConfig) handlerCreateUser(c echo.Context) error {
 	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
-		return c.JSON(statusCode, echo.Map{"Error": err})
+		return c.JSON(statusCode, echo.Map{"Error": "unauthorized"})
 	}
 
 	user, err := cfg.DbQueries.CreateUser(
@@ -56,7 +56,7 @@ func (cfg *ApiConfig) handlerUpdateUserData(c echo.Context) error {
 
 	hashedPassword, email, username, statusCode, err := getHashedPasswordAndEmail(c)
 	if err != nil {
-		return c.JSON(statusCode, echo.Map{"Error": err})
+		return c.JSON(statusCode, echo.Map{"Error": "unauthorized"})
 	}
 
 	userFromEmail, err := cfg.DbQueries.GetUserByEmail(c.Request().Context(), email)

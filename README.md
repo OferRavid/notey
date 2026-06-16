@@ -1,3 +1,4 @@
+![Ci status badge](https://github.com/OferRavid/learn-cicd-starter/actions/workflows/ci.yml/badge.svg) ![Cd status badge](https://github.com/OferRavid/learn-cicd-starter/actions/workflows/cd.yml/badge.svg)
 # 📒 Notey
 
 This is a streamlined RESTful API designed for a note-taking application, featuring user authentication that enables users to create, read, update, and delete notes. Notey is developed in Go utilizing the Echo framework, PostgreSQL for data management, and JSON Web Tokens (JWT) for secure authentication.
